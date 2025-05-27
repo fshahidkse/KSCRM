@@ -1010,7 +1010,7 @@ return [
                 'attributes'               => 'Attributes',
                 'attributes-info'          => 'Add custom attributes to the form.',
                 'background-color'         => 'Background Color',
-                'create-lead'              => 'Create Lead',
+                'create-lead'              => 'Create Opportunity',
                 'customize-webform'        => 'Customize Webform',
                 'customize-webform-info'   => 'Customize your web form with element colors of your choosing.',
                 'description'              => 'Description',
@@ -1042,7 +1042,7 @@ return [
                 'code-snippet'              => 'Code Snippet',
                 'copied'                    => 'Copied',
                 'copy'                      => 'Copy',
-                'create-lead'               => 'Create Lead',
+                'create-lead'               => 'Create Opportunity',
                 'customize-webform'         => 'Customize Webform',
                 'customize-webform-info'    => 'Customize your web form with element colors of your choosing.',
                 'description'               => 'Description',
@@ -1846,7 +1846,7 @@ return [
             'add-new-lead'               => 'Add New Lead',
             'create-new-contact'         => 'Create New Contact',
             'save-contact'               => 'Save Contact',
-            'create-lead'                => 'Create Lead',
+            'create-lead'                => 'Create Opportunity',
             'linked-contact'             => 'Linked Contact',
             'link-to-contact'            => 'Link To Contact',
             'link-to-lead'               => 'Link To Lead',
@@ -1906,7 +1906,7 @@ return [
 
         'index' => [
             'title'      => 'Leads',
-            'create-btn' => 'Create Lead',
+            'create-btn' => 'Create Opportunity',
 
             'datagrid' => [
                 'id'                  => 'ID',
@@ -1970,7 +1970,7 @@ return [
             ],
 
             'upload' => [
-                'create-lead'   => 'Create Lead Using AI',
+                'create-lead'   => 'Create Opportunity Using AI',
                 'file'          => 'File Upload',
                 'file-info'     => 'Only pdf,bmp,jpg,jpeg,png format files are accepted.',
                 'file-required' => 'Please select at least one valid file to proceed.',
@@ -1980,10 +1980,10 @@ return [
         ],
 
         'create' => [
-            'title'          => 'Create Lead',
+            'title'          => 'Create Opportunity',
             'save-btn'       => 'Save',
             'details'        => 'Details',
-            'details-info'   => 'Put The Basic Information of the Lead',
+            'details-info'   => 'Put The Basic Information of the Opportunity',
             'contact-person' => 'Contact Person',
             'contact-info'   => 'Information About the Contact Person',
             'products'       => 'Products',

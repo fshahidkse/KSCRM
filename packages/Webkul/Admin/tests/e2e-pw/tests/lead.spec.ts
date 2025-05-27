@@ -7,7 +7,7 @@ async function generateLead(adminPage) {
      * Go to the lead listing page.
      */
     await adminPage.goto("admin/leads");
-    await adminPage.getByRole('link', { name: 'Create Lead' }).click();
+    await adminPage.getByRole('link', { name: 'Create Opportunity' }).click();
 
     /**
      * Fill the lead form.
