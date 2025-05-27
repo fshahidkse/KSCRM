@@ -16,7 +16,7 @@ async function generateLead(adminPage) {
     const leadDescription = generateDescription();
     const leadDate = generateDate();
     const leadEmail = generateEmail();
-    const leadPhoneNumber = generatePhoneNumber();
+    const leadPhoneNumber = generatePhoneNumber() ;
 
     await adminPage.fill('input[name="title"]', leadTitle);
     await adminPage.fill('textarea[name="description"]', leadDescription);
