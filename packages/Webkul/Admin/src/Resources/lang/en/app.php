@@ -118,7 +118,7 @@ return [
                 'file' => [
                     'btn'           => 'File',
                     'title'         => 'Add File',
-                    'title-control' => 'Title',
+                    'title-control' => 'Opportunity Name',
                     'name'          => 'Name',
                     'description'   => 'Description',
                     'file'          => 'File',
@@ -135,7 +135,7 @@ return [
                 'activity' => [
                     'btn'           => 'Activity',
                     'title'         => 'Add Activity',
-                    'title-control' => 'Title',
+                    'title-control' => 'Opportunity Name',
                     'description'   => 'Description',
                     'schedule-from' => 'Schedule From',
                     'schedule-to'   => 'Schedule To',
@@ -600,7 +600,7 @@ return [
                         'file' => [
                             'btn'           => 'File',
                             'title'         => 'Add File',
-                            'title-control' => 'Title',
+                            'title-control' => 'Opportunity Name',
                             'name'          => 'File Name',
                             'description'   => 'Description',
                             'file'          => 'File',
@@ -617,7 +617,7 @@ return [
                         'activity' => [
                             'btn'           => 'Activity',
                             'title'         => 'Add Activity',
-                            'title-control' => 'Title',
+                            'title-control' => 'Opportunity Name',
                             'description'   => 'Description',
                             'schedule-from' => 'Schedule From',
                             'schedule-to'   => 'Schedule To',
@@ -997,7 +997,7 @@ return [
 
                 'datagrid'       => [
                     'id'     => 'ID',
-                    'title'  => 'Title',
+                    'title'  => 'Opportunity Name',
                     'edit'   => 'Edit',
                     'delete' => 'Delete',
                 ],
@@ -1732,7 +1732,7 @@ return [
                 'schedule-to'   => 'Schedule To',
                 'schedule_from' => 'Schedule From',
                 'schedule_to'   => 'Schedule To',
-                'title'         => 'Title',
+                'title'         => 'Opportunity Name',
                 'is_done'       => 'Is Done',
                 'type'          => 'Type',
                 'update'        => 'Update',
@@ -1843,7 +1843,7 @@ return [
             'add-new-contact'            => 'Add New Contact',
             'description'                => 'Description',
             'search'                     => 'Search...',
-            'add-new-lead'               => 'Add New Lead',
+            'add-new-lead'               => 'Add New Opportunity',
             'create-new-contact'         => 'Create New Contact',
             'save-contact'               => 'Save Contact',
             'create-lead'                => 'Create Opportunity',
@@ -1941,7 +1941,7 @@ return [
                     'lead-value'          => 'Lead Value',
                     'sales-person'        => 'Sales Person',
                     'source'              => 'Source',
-                    'title'               => 'Title',
+                    'title'               => 'Opportunity Name',
                     'tags'                => 'Tags',
                     'expected-close-date' => 'Expected Close Date',
                     'created-at'          => 'Created At',

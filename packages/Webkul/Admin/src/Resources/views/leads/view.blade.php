@@ -47,7 +47,18 @@
                 <!-- Title -->
                 <h3 class="text-lg font-bold dark:text-white">
                     {{ $lead->title }}
-                </h1>
+                </h3>
+                <div class="mt-2">
+                    @if($lead->client_company)
+                        <div class="text-sm text-gray-700 dark:text-gray-200"><strong>Client Company:</strong> {{ $lead->client_company }}</div>
+                    @endif
+                    @if($lead->owner_company)
+                        <div class="text-sm text-gray-700 dark:text-gray-200"><strong>Owner Company:</strong> {{ $lead->owner_company }}</div>
+                    @endif
+                    @if($lead->opportunity_number)
+                        <div class="text-sm text-gray-700 dark:text-gray-200"><strong>Opportunity Number:</strong> {{ $lead->opportunity_number }}</div>
+                    @endif
+                </div>
 
                 {!! view_render_event('admin.leads.view.title.after', ['lead' => $lead]) !!}
 

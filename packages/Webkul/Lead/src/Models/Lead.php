@@ -39,6 +39,9 @@ class Lead extends Model implements LeadContract
      */
     protected $fillable = [
         'title',
+        'client_company',
+        'owner_company',
+        'opportunity_number',
         'description',
         'lead_value',
         'status',

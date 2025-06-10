@@ -135,6 +135,9 @@ class LeadForm extends FormRequest
 
         return [
             ...$this->rules,
+            'client_company'        => 'nullable|string',
+            'owner_company'         => 'nullable|string',
+            'opportunity_number'    => 'nullable|string|unique:leads,opportunity_number',
             'products'              => 'array',
             'products.*.product_id' => 'sometimes|required|exists:products,id',
             'products.*.name'       => 'required_with:products.*.product_id',

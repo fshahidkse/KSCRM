@@ -1,5 +1,6 @@
 import { test, expect } from "../setup";
-import fs from "fs";
+import * as fs from 'fs';
+
 import { generateName, getRandomDateTime, generateDescription, generateDate, generateEmail, generatePhoneNumber,generateEmailSubject } from '../utils/faker';
 
 async function generateLead(adminPage) {
