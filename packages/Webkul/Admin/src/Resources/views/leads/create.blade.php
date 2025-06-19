@@ -180,8 +180,39 @@
 
                     {!! view_render_event('admin.leads.create.details.after') !!}
 
-                    {!! view_render_event('admin.leads.create.contact_person.before') !!}
+                    <!-- Metrics Section -->
+                    <div id="metrics" class="mt-8">
+                        <h4 class="text-lg font-semibold mb-4">Metrics</h4>
+                        <x-admin::attributes
+                            :custom-attributes="app('Webkul\Attribute\Repositories\AttributeRepository')->findWhere([
+                                ['code', 'IN', ['total_estimated_fee', 'firm_estimated_fee', 'win_probability']],
+                                'entity_type' => 'leads',
+                                'quick_add'   => 1
+                            ])"
+                        />
+                    </div>
 
+                    <!-- Lifecycle Section -->
+                    <div id="lifecycle" class="mt-8">
+                        <h4 class="text-lg font-semibold mb-4">Lifecycle</h4>
+                        <x-admin::attributes
+                            :custom-attributes="app('Webkul\Attribute\Repositories\AttributeRepository')->findWhere([
+                                ['code', 'IN', [
+                                    'quals_due_date',
+                                    'proposal_due_date',
+                                    'estimated_selection_date',
+                                    'close_date',
+                                    'estimated_start_date',
+                                    'estimated_completion_date'
+                                ]],
+                                'entity_type' => 'leads',
+                                'quick_add'   => 1
+                            ])"
+                        />
+                    </div>
+
+                    {!! view_render_event('admin.leads.create.contact_person.before') !!}
+                    
                     <!-- Contact Person -->
                     <div 
                         class="flex flex-col gap-4" 
