@@ -132,15 +132,15 @@
                                     <!-- Header -->
                                     <div class="flex items-start justify-between">
                                         <div class="flex items-center gap-1">
-                                            <x-admin::avatar ::name="element.person.name" />
+                                            <x-admin::avatar ::name="element.person && element.person.name ? element.person.name : ''" />
                                   
                                             <div class="flex flex-col gap-0.5">
                                                 <span class="text-xs font-medium">
-                                                    @{{ element.person.name }}
+                                                    @{{ element.person && element.person.name ? element.person.name : '' }}
                                                 </span>
 
                                                 <span class="text-[10px] leading-normal">
-                                                    @{{ element.person.organization?.name }}
+                                                    @{{ element.person && element.person.organization && element.person.organization.name ? element.person.organization.name : '' }}
                                                 </span>
                                             </div>
                                         </div>
