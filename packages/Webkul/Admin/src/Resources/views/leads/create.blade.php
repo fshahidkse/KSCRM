@@ -127,7 +127,25 @@
                             </div> -->
                             <x-admin::attributes
                                 :custom-attributes="app('Webkul\Attribute\Repositories\AttributeRepository')->findWhere([
-                                    ['code', 'NOTIN', ['lead_value', 'lead_type_id', 'lead_source_id', 'expected_close_date', 'user_id', 'lead_pipeline_id', 'lead_pipeline_stage_id']],
+                                    ['code', 'NOTIN', [
+                                        'lead_value', 'lead_type_id', 'lead_source_id', 'expected_close_date', 'user_id', 'lead_pipeline_id', 'lead_pipeline_stage_id',
+                                        // Exclude all Lifecycle attribute codes:
+                                        'quals_due_date',
+                                        'proposal_due_date',
+                                        'estimated_selection_date',
+                                        'close_date',
+                                        'estimated_start_date',
+                                        'estimated_completion_date',
+                                        // Exclude all Metrics attribute codes:
+                                        'total_estimated_fee',
+                                        'firm_estimated_fee',
+                                        'win_probability',
+                                        // Exclude all Address attribute codes:
+                                        'project_address_1',
+                                        'project_city',
+                                        'project_state',
+                                        'project_postal_code'
+                                    ]],
                                     'entity_type' => 'leads',
                                     'quick_add'   => 1
                                 ])"
@@ -179,6 +197,18 @@
                     </div>
 
                     {!! view_render_event('admin.leads.create.details.after') !!}
+
+                    <!-- Address Section -->
+                    <div id="address" class="mt-8">
+                        <h4 class="text-lg font-semibold mb-4">Address</h4>
+                        <x-admin::attributes
+                            :custom-attributes="app('Webkul\Attribute\Repositories\AttributeRepository')->findWhere([
+                                ['code', 'IN', ['project_address_1', 'project_city', 'project_state', 'project_postal_code']],
+                                'entity_type' => 'leads',
+                                'quick_add'   => 1
+                            ])"
+                        />
+                    </div>
 
                     <!-- Metrics Section -->
                     <div id="metrics" class="mt-8">
@@ -272,6 +302,9 @@
 
                         tabs: [
                             { id: 'lead-details', label: '@lang('admin::app.leads.create.details')' },
+                            { id: 'address', label: 'Address' },
+                            { id: 'metrics', label: 'Metrics' },
+                            { id: 'lifecycle', label: 'Lifecycle' },
                             { id: 'contact-person', label: '@lang('admin::app.leads.create.contact-person')' },
                             // { id: 'products', label: '@lang('admin::app.leads.create.products')' }
                         ],
