@@ -1,4 +1,4 @@
-<x-admin::layouts>
+﻿<x-admin::layouts>
     <x-slot:title>
         @lang('admin::app.leads.create.title')
     </x-slot>
@@ -107,77 +107,79 @@
                             </p>
                         </div>
 
-                        <div class="w-1/2 max-md:w-full">
+                        <div class="w-full">
                             {!! view_render_event('admin.leads.create.details.attributes.before') !!}
 
                             <!-- Lead Details Title and Description -->
                             <div class="flex flex-col gap-4">
-                                <x-admin::form.control-group>
-                                    <x-admin::form.control-group.label
-                                        for="title"
-                                        class="required"
-                                    >
-                                        @lang('admin::app.leads.create.opportunity-name')
-                                    </x-admin::form.control-group.label>
+                                <div class="flex flex-wrap gap-4 md:flex-nowrap">
+                                    <x-admin::form.control-group class="flex-1 min-w-[12rem]">
+                                        <x-admin::form.control-group.label
+                                            for="title"
+                                            class="required"
+                                        >
+                                            @lang('admin::app.leads.create.opportunity-name')
+                                        </x-admin::form.control-group.label>
 
-                                    <x-admin::form.control-group.control
-                                        type="text"
-                                        name="title"
-                                        id="title"
-                                        value="{{ old('title') }}"
-                                        rules="required"
-                                    />
+                                        <x-admin::form.control-group.control
+                                            type="text"
+                                            name="title"
+                                            id="title"
+                                            value="{{ old('title') }}"
+                                            rules="required"
+                                        />
 
-                                    <x-admin::form.control-group.error control-name="title" />
-                                </x-admin::form.control-group>
+                                        <x-admin::form.control-group.error control-name="title" />
+                                    </x-admin::form.control-group>
 
-                                <x-admin::form.control-group>
-                                    <x-admin::form.control-group.label for="opportunity_number">
-                                        @lang('admin::app.leads.create.opportunity-number')
-                                    </x-admin::form.control-group.label>
+                                    <x-admin::form.control-group class="flex-1 min-w-[12rem]">
+                                        <x-admin::form.control-group.label for="opportunity_number" class="required">
+                                            @lang('admin::app.leads.create.opportunity-number')
+                                        </x-admin::form.control-group.label>
 
-                                    <x-admin::form.control-group.control
-                                        type="text"
-                                        name="opportunity_number"
-                                        id="opportunity_number"
-                                        value="{{ old('opportunity_number') }}"
-                                        
-                                    />
+                                        <x-admin::form.control-group.control
+                                            type="text"
+                                            name="opportunity_number"
+                                            id="opportunity_number"
+                                            value="{{ old('opportunity_number') }}"
+                                            rules="required"
+                                        />
 
-                                    <x-admin::form.control-group.error control-name="opportunity_number" />
-                                </x-admin::form.control-group>
+                                        <x-admin::form.control-group.error control-name="opportunity_number" />
+                                    </x-admin::form.control-group>
+                                </div>
 
-                                <x-admin::form.control-group>
-                                    <x-admin::form.control-group.label for="client_company">
-                                        @lang('admin::app.leads.create.client-company')
-                                    </x-admin::form.control-group.label>
+                                <div class="flex flex-wrap gap-4 md:flex-nowrap">
+                                    <x-admin::form.control-group class="flex-1 min-w-[12rem]">
+                                        <x-admin::form.control-group.label for="client_company">
+                                            @lang('admin::app.leads.create.client-company')
+                                        </x-admin::form.control-group.label>
 
-                                    <x-admin::form.control-group.control
-                                        type="text"
-                                        name="client_company"
-                                        id="client_company"
-                                        value="{{ old('client_company') }}"
-                                        
-                                    />
+                                        <x-admin::form.control-group.control
+                                            type="text"
+                                            name="client_company"
+                                            id="client_company"
+                                            value="{{ old('client_company') }}"
+                                        />
 
-                                    <x-admin::form.control-group.error control-name="client_company" />
-                                </x-admin::form.control-group>
+                                        <x-admin::form.control-group.error control-name="client_company" />
+                                    </x-admin::form.control-group>
 
-                                <x-admin::form.control-group>
-                                    <x-admin::form.control-group.label for="owner_company">
-                                        @lang('admin::app.leads.create.owner-company')
-                                    </x-admin::form.control-group.label>
+                                    <x-admin::form.control-group class="flex-1 min-w-[12rem]">
+                                        <x-admin::form.control-group.label for="owner_company">
+                                            @lang('admin::app.leads.create.owner-company')
+                                        </x-admin::form.control-group.label>
 
-                                    <x-admin::form.control-group.control
-                                        type="text"
-                                        name="owner_company"
-                                        id="owner_company"
-                                        value="{{ old('owner_company') }}"
-                                        
-                                    />
+                                        <x-admin::form.control-group.control
+                                            type="text"
+                                            name="owner_company"
+                                            id="owner_company"
+                                            value="{{ old('owner_company') }}"
+                                        />
 
-                                    <x-admin::form.control-group.error control-name="owner_company" />
-                                </x-admin::form.control-group>
+                                        <x-admin::form.control-group.error control-name="owner_company" />
+                                    </x-admin::form.control-group>
+                                </div>
                             </div>
                             <x-admin::attributes
                                 :custom-attributes="app('Webkul\Attribute\Repositories\AttributeRepository')->findWhere([
@@ -255,13 +257,114 @@
                     <!-- Address Section -->
                     <div id="address" class="mt-8">
                         <h4 class="text-lg font-semibold mb-4">Address</h4>
-                        <x-admin::attributes
-                            :custom-attributes="app('Webkul\Attribute\Repositories\AttributeRepository')->findWhere([
+                        @php
+                            $addressAttributes = app('Webkul\Attribute\Repositories\AttributeRepository')->findWhere([
                                 ['code', 'IN', ['project_address_1', 'project_city', 'project_state', 'project_postal_code']],
                                 'entity_type' => 'leads',
-                                'quick_add'   => 1
-                            ])"
-                        />
+                                'quick_add'   => 1,
+                            ])->keyBy('code');
+
+                            $addressOrder = [
+                                'project_address_1',
+                                'project_city',
+                                'project_postal_code',
+                                'project_state',
+                            ];
+                        @endphp
+
+                        <div class="flex flex-wrap gap-4">
+                            @foreach (['project_address_1', 'project_city'] as $code)
+                                @php
+                                    $attribute = $addressAttributes[$code] ?? null;
+
+                                    if (! $attribute) {
+                                        continue;
+                                    }
+
+                                    $validations = [];
+
+                                    if ($attribute->is_required) {
+                                        $validations[] = 'required';
+                                    }
+
+                                    if ($attribute->validation) {
+                                        $validations[] = $attribute->validation === 'decimal'
+                                            ? 'decimal'
+                                            : $attribute->validation;
+                                    }
+
+                                    if ($attribute->type === 'price' && ! in_array('decimal', $validations)) {
+                                        $validations[] = 'decimal';
+                                    }
+
+                                    $validationString = implode('|', array_filter($validations));
+                                @endphp
+
+                                <x-admin::form.control-group class="flex-1 min-w-[12rem]">
+                                    <x-admin::form.control-group.label
+                                        for="{{ $attribute->code }}"
+                                        :class="$attribute->is_required ? 'required' : ''"
+                                    >
+                                        {{ $attribute->name }}
+                                    </x-admin::form.control-group.label>
+
+                                    <x-admin::attributes.edit.index
+                                        :attribute="$attribute"
+                                        :value="old($attribute->code)"
+                                        :validations="$validationString"
+                                    />
+
+                                    <x-admin::form.control-group.error :control-name="$attribute->code" />
+                                </x-admin::form.control-group>
+                            @endforeach
+                        </div>
+
+                        <div class="flex flex-wrap gap-4">
+                            @foreach (['project_postal_code', 'project_state'] as $code)
+                                @php
+                                    $attribute = $addressAttributes[$code] ?? null;
+
+                                    if (! $attribute) {
+                                        continue;
+                                    }
+
+                                    $validations = [];
+
+                                    if ($attribute->is_required) {
+                                        $validations[] = 'required';
+                                    }
+
+                                    if ($attribute->validation) {
+                                        $validations[] = $attribute->validation === 'decimal'
+                                            ? 'decimal'
+                                            : $attribute->validation;
+                                    }
+
+                                    if ($attribute->type === 'price' && ! in_array('decimal', $validations)) {
+                                        $validations[] = 'decimal';
+                                    }
+
+                                    $validationString = implode('|', array_filter($validations));
+                                @endphp
+
+                                <x-admin::form.control-group class="flex-1 min-w-[12rem]">
+                                    <x-admin::form.control-group.label
+                                        for="{{ $attribute->code }}"
+                                        :class="$attribute->is_required ? 'required' : ''"
+                                    >
+                                        {{ $attribute->name }}
+                                    </x-admin::form.control-group.label>
+
+                                    <x-admin::attributes.edit.index
+                                        :attribute="$attribute"
+                                        :value="old($attribute->code)"
+                                        :validations="$validationString"
+                                    />
+
+                                    <x-admin::form.control-group.error :control-name="$attribute->code" />
+                                </x-admin::form.control-group>
+                            @endforeach
+                        </div>
                     </div>
 
                     <!-- Metrics Section -->
@@ -475,3 +578,4 @@
         </style>
     @endPushOnce    
 </x-admin::layouts>
+

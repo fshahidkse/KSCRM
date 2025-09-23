@@ -106,21 +106,25 @@
 
                             <!-- Lead Details Title and Description -->
                             <div class="flex flex-col gap-4">
-                                <div>
-                                    <label for="title" class="block text-sm font-medium text-gray-700 dark:text-gray-200">@lang('admin::app.leads.edit.opportunity-name')</label>
-                                    <input type="text" name="title" id="title" class="form-input mt-1 block w-full" value="{{ old('title', $lead->title) }}" required />
+                                <div class="flex flex-wrap gap-4 md:flex-nowrap">
+                                    <div class="flex-1 min-w-[12rem]">
+                                        <label for="title" class="block text-sm font-medium text-gray-700 dark:text-gray-200">@lang('admin::app.leads.edit.opportunity-name')</label>
+                                        <input type="text" name="title" id="title" class="form-input mt-1 block w-full" value="{{ old('title', $lead->title) }}" required />
+                                    </div>
+                                    <div class="flex-1 min-w-[12rem]">
+                                        <label for="opportunity_number" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Opportunity Number</label>
+                                        <input type="text" name="opportunity_number" id="opportunity_number" class="form-input mt-1 block w-full" value="{{ old('opportunity_number', $lead->opportunity_number) }}" required />
+                                    </div>
                                 </div>
-                                <div>
-                                    <label for="client_company" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Client Company</label>
-                                    <input type="text" name="client_company" id="client_company" class="form-input mt-1 block w-full" value="{{ old('client_company', $lead->client_company) }}" />
-                                </div>
-                                <div>
-                                    <label for="owner_company" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Owner Company</label>
-                                    <input type="text" name="owner_company" id="owner_company" class="form-input mt-1 block w-full" value="{{ old('owner_company', $lead->owner_company) }}" />
-                                </div>
-                                <div>
-                                    <label for="opportunity_number" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Opportunity Number</label>
-                                    <input type="text" name="opportunity_number" id="opportunity_number" class="form-input mt-1 block w-full" value="{{ old('opportunity_number', $lead->opportunity_number) }}" />
+                                <div class="flex flex-wrap gap-4 md:flex-nowrap">
+                                    <div class="flex-1 min-w-[12rem]">
+                                        <label for="client_company" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Client Company</label>
+                                        <input type="text" name="client_company" id="client_company" class="form-input mt-1 block w-full" value="{{ old('client_company', $lead->client_company) }}" />
+                                    </div>
+                                    <div class="flex-1 min-w-[12rem]">
+                                        <label for="owner_company" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Owner Company</label>
+                                        <input type="text" name="owner_company" id="owner_company" class="form-input mt-1 block w-full" value="{{ old('owner_company', $lead->owner_company) }}" />
+                                    </div>
                                 </div>
                             </div>
                             <x-admin::attributes

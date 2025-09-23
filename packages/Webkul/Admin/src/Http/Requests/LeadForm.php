@@ -138,7 +138,7 @@ class LeadForm extends FormRequest
             ...$this->rules,
             'client_company'        => 'nullable|string',
             'owner_company'         => 'nullable|string',
-            'opportunity_number'    => ['nullable', 'string', Rule::unique('leads', 'opportunity_number')->ignore($this->route('id'))],
+            'opportunity_number'    => ['required', 'string', Rule::unique('leads', 'opportunity_number')->ignore($this->route('id'))],
             'products'              => 'array',
             'products.*.product_id' => 'sometimes|required|exists:products,id',
             'products.*.name'       => 'required_with:products.*.product_id',
