@@ -320,8 +320,8 @@
                     <!-- Lifecycle Section -->
                     <div id="lifecycle" class="mt-8">
                         <h4 class="text-lg font-semibold mb-4">Lifecycle</h4>
-                        <x-admin::attributes
-                            :custom-attributes="app('Webkul\Attribute\Repositories\AttributeRepository')->findWhere([
+                        @php
+                            $lifecycleAttributes = app('Webkul\Attribute\Repositories\AttributeRepository')->findWhere([
                                 ['code', 'IN', [
                                     'quals_due_date',
                                     'proposal_due_date',
@@ -331,9 +331,50 @@
                                     'estimated_completion_date'
                                 ]],
                                 'entity_type' => 'leads',
-                                'quick_add'   => 1
-                            ])"
-                        />
+                                'quick_add'   => 1,
+                            ]);
+                        @endphp
+
+                        <div class="flex flex-wrap gap-4 md:flex-nowrap">
+                            @foreach ($lifecycleAttributes as $attribute)
+                                @php
+                                    $validations = [];
+
+                                    if ($attribute->is_required) {
+                                        $validations[] = 'required';
+                                    }
+
+                                    if ($attribute->validation) {
+                                        $validations[] = $attribute->validation === 'decimal'
+                                            ? 'decimal'
+                                            : $attribute->validation;
+                                    }
+
+                                    if ($attribute->type === 'price' && ! in_array('decimal', $validations)) {
+                                        $validations[] = 'decimal';
+                                    }
+
+                                    $validationString = implode('|', array_filter($validations));
+                                @endphp
+
+                                <x-admin::form.control-group class="flex-1 min-w-[12rem]">
+                                    <x-admin::form.control-group.label
+                                        for="{{ $attribute->code }}"
+                                        :class="$attribute->is_required ? 'required' : ''"
+                                    >
+                                        {{ $attribute->name }}
+                                    </x-admin::form.control-group.label>
+
+                                    <x-admin::attributes.edit.index
+                                        :attribute="$attribute"
+                                        :value="old($attribute->code)"
+                                        :validations="$validationString"
+                                    />
+
+                                    <x-admin::form.control-group.error :control-name="$attribute->code" />
+                                </x-admin::form.control-group>
+                            @endforeach
+                        </div>
                     </div>
 
                     {!! view_render_event('admin.leads.create.contact_person.before') !!}
