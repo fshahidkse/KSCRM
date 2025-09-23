@@ -2274,7 +2274,7 @@ return [
     'layouts' => [
         'app-version'          => 'Version: :version',
         'dashboard'            => 'Dashboard',
-        'leads'                => 'Leads',
+        'leads'                => 'Opportunities',
         'quotes'               => 'Quotes',
         'quote'                => 'Quote',
         'mail'                 => [
