@@ -1,4 +1,4 @@
-<x-admin::layouts>
+﻿<x-admin::layouts>
     <x-slot:title>
         @lang('admin::app.leads.create.title')
     </x-slot>
@@ -111,24 +111,78 @@
                             {!! view_render_event('admin.leads.create.details.attributes.before') !!}
 
                             <!-- Lead Details Title and Description -->
-                            <!-- <div class="flex flex-col gap-4">
-                                <div>
-                                    <label for="client_company" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Client Company</label>
-                                    <input type="text" name="client_company" id="client_company" class="form-input mt-1 block w-full" value="{{ old('client_company') }}" />
-                                </div>
-                                <div>
-                                    <label for="owner_company" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Owner Company</label>
-                                    <input type="text" name="owner_company" id="owner_company" class="form-input mt-1 block w-full" value="{{ old('owner_company') }}" />
-                                </div>
-                                <div>
-                                    <label for="opportunity_number" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Opportunity Number</label>
-                                    <input type="text" name="opportunity_number" id="opportunity_number" class="form-input mt-1 block w-full" value="{{ old('opportunity_number') }}" />
-                                </div>
-                            </div> -->
+                            <div class="flex flex-col gap-4">
+                                <x-admin::form.control-group>
+                                    <x-admin::form.control-group.label
+                                        for="title"
+                                        class="required"
+                                    >
+                                        @lang('admin::app.leads.create.opportunity-name')
+                                    </x-admin::form.control-group.label>
+
+                                    <x-admin::form.control-group.control
+                                        type="text"
+                                        name="title"
+                                        id="title"
+                                        value="{{ old('title') }}"
+                                        rules="required"
+                                    />
+
+                                    <x-admin::form.control-group.error control-name="title" />
+                                </x-admin::form.control-group>
+
+                                <x-admin::form.control-group>
+                                    <x-admin::form.control-group.label for="opportunity_number">
+                                        @lang('admin::app.leads.create.opportunity-number')
+                                    </x-admin::form.control-group.label>
+
+                                    <x-admin::form.control-group.control
+                                        type="text"
+                                        name="opportunity_number"
+                                        id="opportunity_number"
+                                        value="{{ old('opportunity_number') }}"
+                                        
+                                    />
+
+                                    <x-admin::form.control-group.error control-name="opportunity_number" />
+                                </x-admin::form.control-group>
+
+                                <x-admin::form.control-group>
+                                    <x-admin::form.control-group.label for="client_company">
+                                        @lang('admin::app.leads.create.client-company')
+                                    </x-admin::form.control-group.label>
+
+                                    <x-admin::form.control-group.control
+                                        type="text"
+                                        name="client_company"
+                                        id="client_company"
+                                        value="{{ old('client_company') }}"
+                                        
+                                    />
+
+                                    <x-admin::form.control-group.error control-name="client_company" />
+                                </x-admin::form.control-group>
+
+                                <x-admin::form.control-group>
+                                    <x-admin::form.control-group.label for="owner_company">
+                                        @lang('admin::app.leads.create.owner-company')
+                                    </x-admin::form.control-group.label>
+
+                                    <x-admin::form.control-group.control
+                                        type="text"
+                                        name="owner_company"
+                                        id="owner_company"
+                                        value="{{ old('owner_company') }}"
+                                        
+                                    />
+
+                                    <x-admin::form.control-group.error control-name="owner_company" />
+                                </x-admin::form.control-group>
+                            </div>
                             <x-admin::attributes
                                 :custom-attributes="app('Webkul\Attribute\Repositories\AttributeRepository')->findWhere([
                                     ['code', 'NOTIN', [
-                                        'lead_value', 'lead_type_id', 'lead_source_id', 'expected_close_date', 'user_id', 'lead_pipeline_id', 'lead_pipeline_stage_id',
+                                        'title', 'opportunity_number', 'client_company', 'owner_company', 'lead_value', 'lead_type_id', 'lead_source_id', 'expected_close_date', 'user_id', 'lead_pipeline_id', 'lead_pipeline_stage_id',
                                         // Exclude all Lifecycle attribute codes:
                                         'quals_due_date',
                                         'proposal_due_date',
@@ -339,3 +393,5 @@
         </style>
     @endPushOnce    
 </x-admin::layouts>
+
+

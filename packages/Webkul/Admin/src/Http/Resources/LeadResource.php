@@ -17,6 +17,9 @@ class LeadResource extends JsonResource
         return [
             'id'                   => $this->id,
             'title'                => $this->title,
+            'client_company'        => $this->client_company,
+            'owner_company'         => $this->owner_company,
+            'opportunity_number'    => $this->opportunity_number,
             'lead_value'           => $this->lead_value,
             'formatted_lead_value' => core()->formatBasePrice($this->lead_value),
             'status'               => $this->status,

@@ -508,7 +508,7 @@ class LeadController extends Controller
             ],
             [
                 'index'                 => 'lead_value',
-                'label'                 => trans('admin::app.leads.index.kanban.columns.lead-value'),
+                'label'                 => __('Opportunity Value'),
                 'type'                  => 'string',
                 'searchable'            => false,
                 'search_field'          => 'in',
@@ -560,7 +560,7 @@ class LeadController extends Controller
             ],
             [
                 'index'                 => 'lead_type_id',
-                'label'                 => trans('admin::app.leads.index.kanban.columns.lead-type'),
+                'label'                 => __('Opportunity Type'),
                 'type'                  => 'string',
                 'searchable'            => false,
                 'search_field'          => 'in',

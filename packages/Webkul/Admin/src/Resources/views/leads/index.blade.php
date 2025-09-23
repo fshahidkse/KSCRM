@@ -1,6 +1,6 @@
 <x-admin::layouts>
     <x-slot:title>
-        @lang('admin::app.leads.index.title')
+        {{ __('Opportunities') }}
     </x-slot>
 
     <!-- Header -->
@@ -10,11 +10,22 @@
         {!! view_render_event('admin.leads.index.header.left.before') !!}
 
         <div class="flex flex-col gap-2">
-            <!-- Breadcrumb's -->
-            <x-admin::breadcrumbs name="leads" />
+            @php
+                $breadcrumbs = \Diglactic\Breadcrumbs\Breadcrumbs::generate('leads');
+
+                if ($breadcrumbs->isNotEmpty()) {
+                    $breadcrumbs->last()->title = __('Opportunities');
+                }
+            @endphp
+
+            <div class="flex justify-start max-lg:hidden">
+                <div class="flex items-center gap-x-3.5">
+                    @include('admin::partials.breadcrumbs', ['breadcrumbs' => $breadcrumbs])
+                </div>
+            </div>
 
             <div class="text-xl font-bold dark:text-white">
-                @lang('admin::app.leads.index.title')
+                {{ __('Opportunities') }}
             </div>
         </div>
 
@@ -23,7 +34,7 @@
         {!! view_render_event('admin.leads.index.header.right.before') !!}
 
         <div class="flex items-center gap-x-2.5">
-            <!-- Upload File for Lead Creation -->
+            <!-- Upload File for Opportunity Creation -->
             @if(core()->getConfigData('general.magic_ai.doc_generation.enabled'))
                 @include('admin::leads.index.upload')
             @endif
@@ -33,14 +44,14 @@
                 <x-admin::datagrid.export :src="route('admin.leads.index')" />
             @endif
 
-            <!-- Create button for Leads -->
+            <!-- Create button for Opportunities -->
             <div class="flex items-center gap-x-2.5">
                 @if (bouncer()->hasPermission('leads.create'))
                     <a
                         href="{{ route('admin.leads.create') }}"
                         class="primary-button"
                     >
-                        @lang('admin::app.leads.index.create-btn')
+                        {{ __('Add Opportunity') }}
                     </a>
                 @endif
             </div>

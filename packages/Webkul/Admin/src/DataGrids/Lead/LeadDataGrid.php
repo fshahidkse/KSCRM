@@ -139,7 +139,7 @@ class LeadDataGrid extends DataGrid
 
         $this->addColumn([
             'index'      => 'title',
-            'label'      => trans('admin::app.leads.index.datagrid.subject'),
+            'label'      => __('Opportunity Title'),
             'type'       => 'string',
             'searchable' => true,
             'sortable'   => true,
@@ -158,7 +158,7 @@ class LeadDataGrid extends DataGrid
 
         $this->addColumn([
             'index'      => 'lead_value',
-            'label'      => trans('admin::app.leads.index.datagrid.lead-value'),
+            'label'      => __('Opportunity Value'),
             'type'       => 'string',
             'sortable'   => true,
             'searchable' => false,
@@ -168,7 +168,7 @@ class LeadDataGrid extends DataGrid
 
         $this->addColumn([
             'index'              => 'lead_type_name',
-            'label'              => trans('admin::app.leads.index.datagrid.lead-type'),
+            'label'              => __('Opportunity Type'),
             'type'               => 'string',
             'searchable'         => false,
             'sortable'           => true,
@@ -235,7 +235,7 @@ class LeadDataGrid extends DataGrid
 
         $this->addColumn([
             'index'      => 'rotten_lead',
-            'label'      => trans('admin::app.leads.index.datagrid.rotten-lead'),
+            'label'      => __('Rotten Opportunity'),
             'type'       => 'string',
             'sortable'   => true,
             'searchable' => false,

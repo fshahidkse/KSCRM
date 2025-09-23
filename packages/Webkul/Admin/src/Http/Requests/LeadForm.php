@@ -4,6 +4,7 @@ namespace Webkul\Admin\Http\Requests;
 
 use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Attribute\Repositories\AttributeValueRepository;
 use Webkul\Core\Contracts\Validations\Decimal;
@@ -137,7 +138,7 @@ class LeadForm extends FormRequest
             ...$this->rules,
             'client_company'        => 'nullable|string',
             'owner_company'         => 'nullable|string',
-            'opportunity_number'    => 'nullable|string|unique:leads,opportunity_number',
+            'opportunity_number'    => ['nullable', 'string', Rule::unique('leads', 'opportunity_number')->ignore($this->route('id'))],
             'products'              => 'array',
             'products.*.product_id' => 'sometimes|required|exists:products,id',
             'products.*.name'       => 'required_with:products.*.product_id',
