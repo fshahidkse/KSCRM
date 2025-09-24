@@ -101,35 +101,109 @@
                             </p>
                         </div>
 
-                        <div class="w-1/2 max-md:w-full">
+                        <div class="w-full">
                             {!! view_render_event('admin.leads.edit.lead_details.attributes.before', ['lead' => $lead]) !!}
 
                             <!-- Lead Details Title and Description -->
                             <div class="flex flex-col gap-4">
                                 <div class="flex flex-wrap gap-4 md:flex-nowrap">
-                                    <div class="flex-1 min-w-[12rem]">
-                                        <label for="title" class="block text-sm font-medium text-gray-700 dark:text-gray-200">@lang('admin::app.leads.edit.opportunity-name')</label>
-                                        <input type="text" name="title" id="title" class="form-input mt-1 block w-full" value="{{ old('title', $lead->title) }}" required />
-                                    </div>
-                                    <div class="flex-1 min-w-[12rem]">
-                                        <label for="opportunity_number" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Opportunity Number</label>
-                                        <input type="text" name="opportunity_number" id="opportunity_number" class="form-input mt-1 block w-full" value="{{ old('opportunity_number', $lead->opportunity_number) }}" required />
-                                    </div>
+                                    <x-admin::form.control-group class="flex-1 min-w-[12rem]">
+                                        <x-admin::form.control-group.label
+                                            for="title"
+                                            class="required"
+                                        >
+                                            @lang('admin::app.leads.edit.opportunity-name')
+                                        </x-admin::form.control-group.label>
+
+                                        <x-admin::form.control-group.control
+                                            type="text"
+                                            name="title"
+                                            id="title"
+                                            value="{{ old('title', $lead->title) }}"
+                                            rules="required"
+                                        />
+
+                                        <x-admin::form.control-group.error control-name="title" />
+                                    </x-admin::form.control-group>
+
+                                    <x-admin::form.control-group class="flex-1 min-w-[12rem]">
+                                        <x-admin::form.control-group.label for="opportunity_number" class="required">
+                                            @lang('admin::app.leads.edit.opportunity-number')
+                                        </x-admin::form.control-group.label>
+
+                                        <x-admin::form.control-group.control
+                                            type="text"
+                                            name="opportunity_number"
+                                            id="opportunity_number"
+                                            value="{{ old('opportunity_number', $lead->opportunity_number) }}"
+                                            rules="required"
+                                        />
+
+                                        <x-admin::form.control-group.error control-name="opportunity_number" />
+                                    </x-admin::form.control-group>
                                 </div>
+
                                 <div class="flex flex-wrap gap-4 md:flex-nowrap">
-                                    <div class="flex-1 min-w-[12rem]">
-                                        <label for="client_company" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Client Company</label>
-                                        <input type="text" name="client_company" id="client_company" class="form-input mt-1 block w-full" value="{{ old('client_company', $lead->client_company) }}" />
-                                    </div>
-                                    <div class="flex-1 min-w-[12rem]">
-                                        <label for="owner_company" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Owner Company</label>
-                                        <input type="text" name="owner_company" id="owner_company" class="form-input mt-1 block w-full" value="{{ old('owner_company', $lead->owner_company) }}" />
-                                    </div>
+                                    <x-admin::form.control-group class="flex-1 min-w-[12rem]">
+                                        <x-admin::form.control-group.label for="client_company">
+                                            @lang('admin::app.leads.edit.client-company')
+                                        </x-admin::form.control-group.label>
+
+                                        <x-admin::form.control-group.control
+                                            type="text"
+                                            name="client_company"
+                                            id="client_company"
+                                            value="{{ old('client_company', $lead->client_company) }}"
+                                        />
+
+                                        <x-admin::form.control-group.error control-name="client_company" />
+                                    </x-admin::form.control-group>
+
+                                    <x-admin::form.control-group class="flex-1 min-w-[12rem]">
+                                        <x-admin::form.control-group.label for="owner_company">
+                                            @lang('admin::app.leads.edit.owner-company')
+                                        </x-admin::form.control-group.label>
+
+                                        <x-admin::form.control-group.control
+                                            type="text"
+                                            name="owner_company"
+                                            id="owner_company"
+                                            value="{{ old('owner_company', $lead->owner_company) }}"
+                                        />
+
+                                        <x-admin::form.control-group.error control-name="owner_company" />
+                                    </x-admin::form.control-group>
                                 </div>
                             </div>
+
                             <x-admin::attributes
                                 :custom-attributes="app('Webkul\Attribute\Repositories\AttributeRepository')->findWhere([
-                                    ['code', 'NOTIN', ['title', 'opportunity_number', 'client_company', 'owner_company', 'lead_value', 'lead_type_id', 'lead_source_id', 'expected_close_date', 'user_id', 'lead_pipeline_id', 'lead_pipeline_stage_id']],
+                                    ['code', 'NOTIN', [
+                                        'title',
+                                        'opportunity_number',
+                                        'client_company',
+                                        'owner_company',
+                                        'lead_value',
+                                        'lead_type_id',
+                                        'lead_source_id',
+                                        'expected_close_date',
+                                        'user_id',
+                                        'lead_pipeline_id',
+                                        'lead_pipeline_stage_id',
+                                        'quals_due_date',
+                                        'proposal_due_date',
+                                        'estimated_selection_date',
+                                        'close_date',
+                                        'estimated_start_date',
+                                        'estimated_completion_date',
+                                        'total_estimated_fee',
+                                        'firm_estimated_fee',
+                                        'win_probability',
+                                        'project_address_1',
+                                        'project_city',
+                                        'project_state',
+                                        'project_postal_code',
+                                    ]],
                                     'entity_type' => 'leads',
                                     'quick_add'   => 1
                                 ])"
@@ -160,7 +234,7 @@
                                         :entity="$lead"
                                     />
                                 </div>
-                                    
+
                                 <div class="w-full">
                                     <x-admin::attributes
                                         :custom-attributes="app('Webkul\Attribute\Repositories\AttributeRepository')->findWhere([
@@ -175,12 +249,238 @@
                                             ],
                                         ]"
                                         :entity="$lead"
-                                        />
+                                    />
                                 </div>
                             </div>
 
                             {!! view_render_event('admin.leads.edit.lead_details.attributes.after', ['lead' => $lead]) !!}
                         </div>
+
+                    <!-- Address Section -->
+                    <div id="address" class="mt-8">
+                        <h4 class="text-lg font-semibold mb-4">Address</h4>
+                        @php
+                            $addressAttributes = app('Webkul\Attribute\Repositories\AttributeRepository')->findWhere([
+                                ['code', 'IN', ['project_address_1', 'project_city', 'project_state', 'project_postal_code']],
+                                'entity_type' => 'leads',
+                                'quick_add'   => 1,
+                            ])->keyBy('code');
+
+                            $addressOrder = [
+                                'project_address_1',
+                                'project_city',
+                                'project_postal_code',
+                                'project_state',
+                            ];
+                        @endphp
+
+                        <div class="flex flex-wrap gap-4">
+                            @foreach (['project_address_1', 'project_city'] as $code)
+                                @php
+                                    $attribute = $addressAttributes[$code] ?? null;
+
+                                    if (! $attribute) {
+                                        continue;
+                                    }
+
+                                    $validations = [];
+
+                                    if ($attribute->is_required) {
+                                        $validations[] = 'required';
+                                    }
+
+                                    if ($attribute->validation) {
+                                        $validations[] = $attribute->validation === 'decimal'
+                                            ? 'decimal'
+                                            : $attribute->validation;
+                                    }
+
+                                    if ($attribute->type === 'price' && ! in_array('decimal', $validations)) {
+                                        $validations[] = 'decimal';
+                                    }
+
+                                    $validationString = implode('|', array_filter($validations));
+                                @endphp
+
+                                <x-admin::form.control-group class="flex-1 min-w-[12rem]">
+                                    <x-admin::form.control-group.label
+                                        for="{{ $attribute->code }}"
+                                        :class="$attribute->is_required ? 'required' : ''"
+                                    >
+                                        {{ $attribute->name }}
+                                    </x-admin::form.control-group.label>
+
+                                    <x-admin::attributes.edit.index
+                                        :attribute="$attribute"
+                                        :value="old($attribute->code, $lead->{$attribute->code} ?? null)"
+                                        :validations="$validationString"
+                                    />
+
+                                    <x-admin::form.control-group.error :control-name="$attribute->code" />
+                                </x-admin::form.control-group>
+                            @endforeach
+                        </div>
+
+                        <div class="flex flex-wrap gap-4">
+                            @foreach (['project_postal_code', 'project_state'] as $code)
+                                @php
+                                    $attribute = $addressAttributes[$code] ?? null;
+
+                                    if (! $attribute) {
+                                        continue;
+                                    }
+
+                                    $validations = [];
+
+                                    if ($attribute->is_required) {
+                                        $validations[] = 'required';
+                                    }
+
+                                    if ($attribute->validation) {
+                                        $validations[] = $attribute->validation === 'decimal'
+                                            ? 'decimal'
+                                            : $attribute->validation;
+                                    }
+
+                                    if ($attribute->type === 'price' && ! in_array('decimal', $validations)) {
+                                        $validations[] = 'decimal';
+                                    }
+
+                                    $validationString = implode('|', array_filter($validations));
+                                @endphp
+
+                                <x-admin::form.control-group class="flex-1 min-w-[12rem]">
+                                    <x-admin::form.control-group.label
+                                        for="{{ $attribute->code }}"
+                                        :class="$attribute->is_required ? 'required' : ''"
+                                    >
+                                        {{ $attribute->name }}
+                                    </x-admin::form.control-group.label>
+
+                                    <x-admin::attributes.edit.index
+                                        :attribute="$attribute"
+                                        :value="old($attribute->code, $lead->{$attribute->code} ?? null)"
+                                        :validations="$validationString"
+                                    />
+
+                                    <x-admin::form.control-group.error :control-name="$attribute->code" />
+                                </x-admin::form.control-group>
+                            @endforeach
+                        </div>
+                    </div>
+
+                    <!-- Metrics Section -->
+                    <div id="metrics" class="mt-8">
+                        <h4 class="text-lg font-semibold mb-4">Metrics</h4>
+                        @php
+                            $metricAttributes = app('Webkul\Attribute\Repositories\AttributeRepository')->findWhere([
+                                ['code', 'IN', ['total_estimated_fee', 'firm_estimated_fee', 'win_probability']],
+                                'entity_type' => 'leads',
+                                'quick_add'   => 1,
+                            ]);
+                        @endphp
+
+                        <div class="flex flex-wrap gap-4 md:flex-nowrap">
+                            @foreach ($metricAttributes as $attribute)
+                                @php
+                                    $validations = [];
+
+                                    if ($attribute->is_required) {
+                                        $validations[] = 'required';
+                                    }
+
+                                    if ($attribute->validation) {
+                                        $validations[] = $attribute->validation === 'decimal'
+                                            ? 'decimal'
+                                            : $attribute->validation;
+                                    }
+
+                                    if ($attribute->type === 'price' && ! in_array('decimal', $validations)) {
+                                        $validations[] = 'decimal';
+                                    }
+
+                                    $validationString = implode('|', array_filter($validations));
+                                @endphp
+
+                                <x-admin::form.control-group class="flex-1 min-w-[12rem]">
+                                    <x-admin::form.control-group.label
+                                        for="{{ $attribute->code }}"
+                                        :class="$attribute->is_required ? 'required' : ''"
+                                    >
+                                        {{ $attribute->name }}
+                                    </x-admin::form.control-group.label>
+
+                                    <x-admin::attributes.edit.index
+                                        :attribute="$attribute"
+                                        :value="old($attribute->code, $lead->{$attribute->code} ?? null)"
+                                        :validations="$validationString"
+                                    />
+
+                                    <x-admin::form.control-group.error :control-name="$attribute->code" />
+                                </x-admin::form.control-group>
+                            @endforeach
+                        </div>
+                    </div>
+
+                    <!-- Lifecycle Section -->
+                    <div id="lifecycle" class="mt-8">
+                        <h4 class="text-lg font-semibold mb-4">Lifecycle</h4>
+                        @php
+                            $lifecycleAttributes = app('Webkul\Attribute\Repositories\AttributeRepository')->findWhere([
+                                ['code', 'IN', [
+                                    'quals_due_date',
+                                    'proposal_due_date',
+                                    'estimated_selection_date',
+                                    'close_date',
+                                    'estimated_start_date',
+                                    'estimated_completion_date'
+                                ]],
+                                'entity_type' => 'leads',
+                                'quick_add'   => 1,
+                            ]);
+                        @endphp
+
+                        <div class="flex flex-wrap gap-4 md:flex-nowrap">
+                            @foreach ($lifecycleAttributes as $attribute)
+                                @php
+                                    $validations = [];
+
+                                    if ($attribute->is_required) {
+                                        $validations[] = 'required';
+                                    }
+
+                                    if ($attribute->validation) {
+                                        $validations[] = $attribute->validation === 'decimal'
+                                            ? 'decimal'
+                                            : $attribute->validation;
+                                    }
+
+                                    if ($attribute->type === 'price' && ! in_array('decimal', $validations)) {
+                                        $validations[] = 'decimal';
+                                    }
+
+                                    $validationString = implode('|', array_filter($validations));
+                                @endphp
+
+                                <x-admin::form.control-group class="flex-1 min-w-[12rem]">
+                                    <x-admin::form.control-group.label
+                                        for="{{ $attribute->code }}"
+                                        :class="$attribute->is_required ? 'required' : ''"
+                                    >
+                                        {{ $attribute->name }}
+                                    </x-admin::form.control-group.label>
+
+                                    <x-admin::attributes.edit.index
+                                        :attribute="$attribute"
+                                        :value="old($attribute->code, $lead->{$attribute->code} ?? null)"
+                                        :validations="$validationString"
+                                    />
+
+                                    <x-admin::form.control-group.error :control-name="$attribute->code" />
+                                </x-admin::form.control-group>
+                            @endforeach
+                        </div>
+                    </div>
                     </div>
 
                     {!! view_render_event('admin.leads.edit.lead_details.after', ['lead' => $lead]) !!}
@@ -256,6 +556,9 @@
 
                         tabs: [
                             { id: 'lead-details', label: '@lang('admin::app.leads.edit.details')' },
+                            { id: 'address', label: 'Address' },
+                            { id: 'metrics', label: 'Metrics' },
+                            { id: 'lifecycle', label: 'Lifecycle' },
                             { id: 'contact-person', label: '@lang('admin::app.leads.edit.contact-person')' },
                             { id: 'products', label: '@lang('admin::app.leads.edit.products')' }
                         ],
@@ -290,3 +593,4 @@
         </style>
     @endPushOnce    
 </x-admin::layouts>
+

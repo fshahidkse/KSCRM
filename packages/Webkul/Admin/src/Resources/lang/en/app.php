@@ -1995,10 +1995,10 @@ return [
         ],
 
         'edit' => [
-            'title'          => 'Edit Lead',
+            'title'          => 'Edit Opportunity',
             'save-btn'       => 'Save',
             'details'        => 'Details',
-            'details-info'   => 'Put The Basic Information of the Lead',
+            'details-info'   => 'Put The Basic Information of the Opportunity',
             'opportunity-name'   => 'Opportunity Name',
             'opportunity-number' => 'Opportunity Number',
             'client-company'     => 'Client Company',
@@ -2434,3 +2434,4 @@ return [
         'xlsx'       => 'XLSX',
     ],
 ];
+
