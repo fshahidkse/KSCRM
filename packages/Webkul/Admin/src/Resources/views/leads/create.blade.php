@@ -458,6 +458,43 @@
                         </div>
                     </div>
 
+                    <!-- Team Section -->
+                    <div id="team" class="mt-8">
+                        <h4 class="text-lg font-semibold mb-4">Team</h4>
+                        
+                        <div class="flex flex-wrap gap-4 md:flex-nowrap">
+                            <x-admin::form.control-group class="flex-1 min-w-[12rem]">
+                                <x-admin::form.control-group.label for="proposal_manager">
+                                    @lang('admin::app.leads.create.proposal-manager')
+                                </x-admin::form.control-group.label>
+
+                                <x-admin::form.control-group.control
+                                    type="text"
+                                    name="proposal_manager"
+                                    id="proposal_manager"
+                                    value="{{ old('proposal_manager') }}"
+                                />
+
+                                <x-admin::form.control-group.error control-name="proposal_manager" />
+                            </x-admin::form.control-group>
+
+                            <x-admin::form.control-group class="flex-1 min-w-[12rem]">
+                                <x-admin::form.control-group.label for="staff_representative">
+                                    @lang('admin::app.leads.create.staff-representative')
+                                </x-admin::form.control-group.label>
+
+                                <x-admin::form.control-group.control
+                                    type="text"
+                                    name="staff_representative"
+                                    id="staff_representative"
+                                    value="{{ old('staff_representative') }}"
+                                />
+
+                                <x-admin::form.control-group.error control-name="staff_representative" />
+                            </x-admin::form.control-group>
+                        </div>
+                    </div>
+
                     {!! view_render_event('admin.leads.create.contact_person.before') !!}
                     
                     <!-- Contact Person -->
@@ -522,6 +559,7 @@
                             { id: 'address', label: 'Address' },
                             { id: 'metrics', label: 'Metrics' },
                             { id: 'lifecycle', label: 'Lifecycle' },
+                            { id: 'team', label: 'Team' },
                             { id: 'contact-person', label: '@lang('admin::app.leads.create.contact-person')' },
                             // { id: 'products', label: '@lang('admin::app.leads.create.products')' }
                         ],

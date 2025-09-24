@@ -1998,6 +1998,8 @@ return [
             'contact-info'   => 'Information About the Contact Person',
             'products'       => 'Products',
             'products-info'  => 'Information About the Products',
+            'proposal-manager' => 'Proposal Manager',
+            'staff-representative' => 'Staff Representative',
         ],
 
         'edit' => [
@@ -2013,6 +2015,8 @@ return [
             'contact-info'   => 'Information About the Contact Person',
             'products'       => 'Products',
             'products-info'  => 'Information About the Products',
+            'proposal-manager' => 'Proposal Manager',
+            'staff-representative' => 'Staff Representative',
         ],
 
         'common' => [
