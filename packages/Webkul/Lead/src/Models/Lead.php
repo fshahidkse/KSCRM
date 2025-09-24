@@ -19,8 +19,7 @@ class Lead extends Model implements LeadContract
     use CustomAttribute, LogsActivity;
 
     protected $casts = [
-        'closed_at'           => 'datetime',
-        'expected_close_date' => 'date',
+        'closed_at' => 'datetime',
     ];
 
     /**
@@ -46,12 +45,8 @@ class Lead extends Model implements LeadContract
         'lead_value',
         'status',
         'lost_reason',
-        'expected_close_date',
         'closed_at',
-        'user_id',
         'person_id',
-        'lead_source_id',
-        'lead_type_id',
         'lead_pipeline_id',
         'lead_pipeline_stage_id',
     ];

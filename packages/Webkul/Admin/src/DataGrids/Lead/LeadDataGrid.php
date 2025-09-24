@@ -54,17 +54,12 @@ class LeadDataGrid extends DataGrid
                 'leads.title',
                 'leads.status',
                 'leads.lead_value',
-                'leads.expected_close_date',
                 'leads.client_company',
                 'leads.owner_company',
                 'leads.opportunity_number',
-                'lead_sources.name as lead_source_name',
-                'lead_types.name as lead_type_name',
                 'leads.created_at',
                 'lead_pipeline_stages.name as stage',
                 'lead_tags.tag_id as tag_id',
-                'users.id as user_id',
-                'users.name as sales_person',
                 'persons.id as person_id',
                 'persons.name as person_name',
                 'tags.name as tag_name',
@@ -72,11 +67,8 @@ class LeadDataGrid extends DataGrid
                 'lead_pipeline_stages.code as stage_code',
                 DB::raw('CASE WHEN DATEDIFF(NOW(),'.$tablePrefix.'leads.created_at) >='.$tablePrefix.'lead_pipelines.rotten_days THEN 1 ELSE 0 END as rotten_lead'),
             )
-            ->leftJoin('users', 'leads.user_id', '=', 'users.id')
             ->leftJoin('persons', 'leads.person_id', '=', 'persons.id')
-            ->leftJoin('lead_types', 'leads.lead_type_id', '=', 'lead_types.id')
             ->leftJoin('lead_pipeline_stages', 'leads.lead_pipeline_stage_id', '=', 'lead_pipeline_stages.id')
-            ->leftJoin('lead_sources', 'leads.lead_source_id', '=', 'lead_sources.id')
             ->leftJoin('lead_pipelines', 'leads.lead_pipeline_id', '=', 'lead_pipelines.id')
             ->leftJoin('lead_tags', 'leads.id', '=', 'lead_tags.lead_id')
             ->leftJoin('tags', 'tags.id', '=', 'lead_tags.tag_id')
@@ -92,15 +84,10 @@ class LeadDataGrid extends DataGrid
         }
 
         $this->addFilter('id', 'leads.id');
-        $this->addFilter('user', 'leads.user_id');
-        $this->addFilter('sales_person', 'users.name');
-        $this->addFilter('lead_source_name', 'lead_sources.name');
-        $this->addFilter('lead_type_name', 'lead_types.name');
         $this->addFilter('person_name', 'persons.name');
         $this->addFilter('type', 'lead_pipeline_stages.code');
         $this->addFilter('stage', 'lead_pipeline_stages.id');
         $this->addFilter('tag_name', 'tags.name');
-        $this->addFilter('expected_close_date', 'leads.expected_close_date');
         $this->addFilter('created_at', 'leads.created_at');
         $this->addFilter('rotten_lead', DB::raw('DATEDIFF(NOW(), '.$tablePrefix.'leads.created_at) >= '.$tablePrefix.'lead_pipelines.rotten_days'));
 
@@ -120,22 +107,6 @@ class LeadDataGrid extends DataGrid
             'filterable' => true,
         ]);
 
-        $this->addColumn([
-            'index'              => 'sales_person',
-            'label'              => trans('admin::app.leads.index.datagrid.sales-person'),
-            'type'               => 'string',
-            'searchable'         => false,
-            'sortable'           => true,
-            'filterable'         => true,
-            'filterable_type'    => 'searchable_dropdown',
-            'filterable_options' => [
-                'repository' => UserRepository::class,
-                'column'     => [
-                    'label' => 'name',
-                    'value' => 'name',
-                ],
-            ],
-        ]);
 
         $this->addColumn([
             'index'      => 'title',
@@ -145,16 +116,6 @@ class LeadDataGrid extends DataGrid
             'sortable'   => true,
         ]);
 
-        $this->addColumn([
-            'index'              => 'lead_source_name',
-            'label'              => trans('admin::app.leads.index.datagrid.source'),
-            'type'               => 'string',
-            'searchable'         => false,
-            'sortable'           => true,
-            'filterable'         => true,
-            'filterable_type'    => 'dropdown',
-            'filterable_options' => $this->sourceRepository->all(['name as label', 'id as value'])->toArray(),
-        ]);
 
         $this->addColumn([
             'index'      => 'lead_value',
@@ -166,16 +127,6 @@ class LeadDataGrid extends DataGrid
             'closure'    => fn ($row) => core()->formatBasePrice($row->lead_value, 2),
         ]);
 
-        $this->addColumn([
-            'index'              => 'lead_type_name',
-            'label'              => __('Opportunity Type'),
-            'type'               => 'string',
-            'searchable'         => false,
-            'sortable'           => true,
-            'filterable'         => true,
-            'filterable_type'    => 'dropdown',
-            'filterable_options' => $this->typeRepository->all(['name as label', 'id as value'])->toArray(),
-        ]);
 
         $this->addColumn([
             'index'              => 'tag_name',
@@ -252,22 +203,6 @@ class LeadDataGrid extends DataGrid
             },
         ]);
 
-        $this->addColumn([
-            'index'           => 'expected_close_date',
-            'label'           => trans('admin::app.leads.index.datagrid.date-to'),
-            'type'            => 'date',
-            'searchable'      => false,
-            'sortable'        => true,
-            'filterable'      => true,
-            'filterable_type' => 'date_range',
-            'closure'         => function ($row) {
-                if (! $row->expected_close_date) {
-                    return '--';
-                }
-
-                return $row->expected_close_date;
-            },
-        ]);
 
         $this->addColumn([
             'index'           => 'created_at',

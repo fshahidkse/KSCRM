@@ -1,4 +1,4 @@
-﻿<x-admin::layouts>
+<x-admin::layouts>
     <x-slot:title>
         @lang('admin::app.leads.create.title')
     </x-slot>
@@ -218,32 +218,10 @@
                                 <div class="w-full">
                                     <x-admin::attributes
                                         :custom-attributes="app('Webkul\Attribute\Repositories\AttributeRepository')->findWhere([
-                                            ['code', 'IN', ['lead_value', 'lead_type_id', 'lead_source_id']],
+                                            ['code', 'IN', ['lead_value']],
                                             'entity_type' => 'leads',
                                             'quick_add'   => 1
                                         ])"
-                                        :custom-validations="[
-                                            'expected_close_date' => [
-                                                'date_format:yyyy-MM-dd',
-                                                'after:' .  \Carbon\Carbon::yesterday()->format('Y-m-d')
-                                            ],
-                                        ]"
-                                    />
-                                </div>
-                                    
-                                <div class="w-full">
-                                    <x-admin::attributes
-                                        :custom-attributes="app('Webkul\Attribute\Repositories\AttributeRepository')->findWhere([
-                                            ['code', 'IN', ['expected_close_date', 'user_id']],
-                                            'entity_type' => 'leads',
-                                            'quick_add'   => 1
-                                        ])"
-                                        :custom-validations="[
-                                            'expected_close_date' => [
-                                                'date_format:yyyy-MM-dd',
-                                                'after:' .  \Carbon\Carbon::yesterday()->format('Y-m-d')
-                                            ],
-                                        ]"
                                     />
                                 </div>
                             </div>
