@@ -58,12 +58,6 @@ class LeadDataGrid extends DataGrid
                 'leads.client_company',
                 'leads.owner_company',
                 'leads.opportunity_number',
-                'leads.quals_due_date',
-                'leads.proposal_due_date',
-                'leads.presentation_datetime',
-                'leads.lead_department',
-                'leads.proposal_manager',
-                'leads.staff_representative',
                 'lead_sources.name as lead_source_name',
                 'lead_types.name as lead_type_name',
                 'leads.created_at',
@@ -107,15 +101,6 @@ class LeadDataGrid extends DataGrid
         $this->addFilter('stage', 'lead_pipeline_stages.id');
         $this->addFilter('tag_name', 'tags.name');
         $this->addFilter('expected_close_date', 'leads.expected_close_date');
-        $this->addFilter('quals_due_date', 'leads.quals_due_date');
-        $this->addFilter('proposal_due_date', 'leads.proposal_due_date');
-        $this->addFilter('presentation_datetime', 'leads.presentation_datetime');
-        $this->addFilter('lead_department', 'leads.lead_department');
-        $this->addFilter('proposal_manager', 'leads.proposal_manager');
-        $this->addFilter('staff_representative', 'leads.staff_representative');
-        $this->addFilter('opportunity_number', 'leads.opportunity_number');
-        $this->addFilter('owner_company', 'leads.owner_company');
-        $this->addFilter('client_company', 'leads.client_company');
         $this->addFilter('created_at', 'leads.created_at');
         $this->addFilter('rotten_lead', DB::raw('DATEDIFF(NOW(), '.$tablePrefix.'leads.created_at) >= '.$tablePrefix.'lead_pipelines.rotten_days'));
 
@@ -153,110 +138,11 @@ class LeadDataGrid extends DataGrid
         ]);
 
         $this->addColumn([
-            'index'      => 'opportunity_number',
-            'label'      => __('Opportunity Number'),
-            'type'       => 'string',
-            'searchable' => true,
-            'sortable'   => true,
-        ]);
-
-        $this->addColumn([
             'index'      => 'title',
             'label'      => __('Opportunity Title'),
             'type'       => 'string',
             'searchable' => true,
             'sortable'   => true,
-        ]);
-
-        $this->addColumn([
-            'index'      => 'owner_company',
-            'label'      => __('Owner Company'),
-            'type'       => 'string',
-            'searchable' => true,
-            'sortable'   => true,
-        ]);
-
-        $this->addColumn([
-            'index'      => 'client_company',
-            'label'      => __('Client Company'),
-            'type'       => 'string',
-            'searchable' => true,
-            'sortable'   => true,
-        ]);
-
-        $this->addColumn([
-            'index'           => 'quals_due_date',
-            'label'           => __('SOQ Due Date'),
-            'type'            => 'date',
-            'searchable'      => false,
-            'sortable'        => true,
-            'filterable'      => true,
-            'filterable_type' => 'date_range',
-            'closure'         => function ($row) {
-                if (! $row->quals_due_date) {
-                    return '--';
-                }
-                return $row->quals_due_date;
-            },
-        ]);
-
-        $this->addColumn([
-            'index'           => 'proposal_due_date',
-            'label'           => __('Proposal Due Date'),
-            'type'            => 'date',
-            'searchable'      => false,
-            'sortable'        => true,
-            'filterable'      => true,
-            'filterable_type' => 'date_range',
-            'closure'         => function ($row) {
-                if (! $row->proposal_due_date) {
-                    return '--';
-                }
-                return $row->proposal_due_date;
-            },
-        ]);
-
-        $this->addColumn([
-            'index'           => 'presentation_datetime',
-            'label'           => __('Presentation Date & Time'),
-            'type'            => 'datetime',
-            'searchable'      => false,
-            'sortable'        => true,
-            'filterable'      => true,
-            'filterable_type' => 'date_range',
-            'closure'         => function ($row) {
-                if (! $row->presentation_datetime) {
-                    return '--';
-                }
-                return date('Y-m-d H:i', strtotime($row->presentation_datetime));
-            },
-        ]);
-
-        $this->addColumn([
-            'index'      => 'lead_department',
-            'label'      => __('Lead Department'),
-            'type'       => 'string',
-            'searchable' => true,
-            'sortable'   => true,
-            'filterable' => true,
-        ]);
-
-        $this->addColumn([
-            'index'      => 'proposal_manager',
-            'label'      => __('Proposal Manager'),
-            'type'       => 'string',
-            'searchable' => true,
-            'sortable'   => true,
-            'filterable' => true,
-        ]);
-
-        $this->addColumn([
-            'index'      => 'staff_representative',
-            'label'      => __('Staff Representative'),
-            'type'       => 'string',
-            'searchable' => true,
-            'sortable'   => true,
-            'filterable' => true,
         ]);
 
         $this->addColumn([

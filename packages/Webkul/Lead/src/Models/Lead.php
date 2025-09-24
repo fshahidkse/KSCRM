@@ -21,9 +21,6 @@ class Lead extends Model implements LeadContract
     protected $casts = [
         'closed_at'           => 'datetime',
         'expected_close_date' => 'date',
-        'quals_due_date'      => 'date',
-        'proposal_due_date'   => 'date',
-        'presentation_datetime' => 'datetime',
     ];
 
     /**
@@ -50,12 +47,6 @@ class Lead extends Model implements LeadContract
         'status',
         'lost_reason',
         'expected_close_date',
-        'quals_due_date',
-        'proposal_due_date',
-        'presentation_datetime',
-        'lead_department',
-        'proposal_manager',
-        'staff_representative',
         'closed_at',
         'user_id',
         'person_id',
