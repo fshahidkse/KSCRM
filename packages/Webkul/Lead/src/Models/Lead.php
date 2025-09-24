@@ -51,6 +51,7 @@ class Lead extends Model implements LeadContract
         'lead_pipeline_stage_id',
         'proposal_manager',
         'staff_representative',
+        'presentation_datetime',
     ];
 
     /**
