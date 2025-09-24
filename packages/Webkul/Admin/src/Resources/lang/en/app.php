@@ -1947,6 +1947,12 @@ return [
                     'created-at'          => 'Created At',
                 ],
 
+                'card' => [
+                    'opportunity-number' => 'Opportunity Number',
+                    'opportunity-name'   => 'Opportunity Name',
+                    'client-company'     => 'Client Company',
+                    'proposal-due-date'  => 'Proposal Due Date',
+                ],
                 'toolbar' => [
                     'search' => [
                         'title' => 'Search',
