@@ -425,11 +425,61 @@
                     <!-- Lifecycle Section -->
                     <div id="lifecycle" class="mt-8">
                         <h4 class="text-lg font-semibold mb-4">Lifecycle</h4>
+                        
+                        <!-- First row: SOQ Due Date, Proposal Due Date -->
+                        <div class="flex flex-wrap gap-4 md:flex-nowrap mb-4">
+                            <x-admin::form.control-group class="flex-1 min-w-[12rem]">
+                                <x-admin::form.control-group.label for="quals_due_date">
+                                    @lang('admin::app.leads.edit.soq-due-date')
+                                </x-admin::form.control-group.label>
+
+                                <x-admin::form.control-group.control
+                                    type="date"
+                                    name="quals_due_date"
+                                    id="quals_due_date"
+                                    value="{{ old('quals_due_date', $lead->quals_due_date ? $lead->quals_due_date->format('Y-m-d') : '') }}"
+                                />
+
+                                <x-admin::form.control-group.error control-name="quals_due_date" />
+                            </x-admin::form.control-group>
+
+                            <x-admin::form.control-group class="flex-1 min-w-[12rem]">
+                                <x-admin::form.control-group.label for="proposal_due_date">
+                                    @lang('admin::app.leads.edit.proposal-due-date')
+                                </x-admin::form.control-group.label>
+
+                                <x-admin::form.control-group.control
+                                    type="date"
+                                    name="proposal_due_date"
+                                    id="proposal_due_date"
+                                    value="{{ old('proposal_due_date', $lead->proposal_due_date ? $lead->proposal_due_date->format('Y-m-d') : '') }}"
+                                />
+
+                                <x-admin::form.control-group.error control-name="proposal_due_date" />
+                            </x-admin::form.control-group>
+                        </div>
+
+                        <!-- Second row: Presentation Date & Time -->
+                        <div class="flex flex-wrap gap-4 md:flex-nowrap mb-4">
+                            <x-admin::form.control-group class="flex-1 min-w-[12rem]">
+                                <x-admin::form.control-group.label for="presentation_datetime">
+                                    @lang('admin::app.leads.edit.presentation-datetime')
+                                </x-admin::form.control-group.label>
+
+                                <x-admin::form.control-group.control
+                                    type="datetime-local"
+                                    name="presentation_datetime"
+                                    id="presentation_datetime"
+                                    value="{{ old('presentation_datetime', $lead->presentation_datetime ? $lead->presentation_datetime->format('Y-m-d\TH:i') : '') }}"
+                                />
+
+                                <x-admin::form.control-group.error control-name="presentation_datetime" />
+                            </x-admin::form.control-group>
+                        </div>
+
                         @php
                             $lifecycleAttributes = app('Webkul\Attribute\Repositories\AttributeRepository')->findWhere([
                                 ['code', 'IN', [
-                                    'quals_due_date',
-                                    'proposal_due_date',
                                     'estimated_selection_date',
                                     'close_date',
                                     'estimated_start_date',
@@ -479,6 +529,58 @@
                                     <x-admin::form.control-group.error :control-name="$attribute->code" />
                                 </x-admin::form.control-group>
                             @endforeach
+                        </div>
+                    </div>
+
+                    <!-- Team Section -->
+                    <div id="team" class="mt-8">
+                        <h4 class="text-lg font-semibold mb-4">Team & Department</h4>
+                        
+                        <div class="flex flex-wrap gap-4 md:flex-nowrap">
+                            <x-admin::form.control-group class="flex-1 min-w-[12rem]">
+                                <x-admin::form.control-group.label for="lead_department">
+                                    @lang('admin::app.leads.edit.lead-department')
+                                </x-admin::form.control-group.label>
+
+                                <x-admin::form.control-group.control
+                                    type="text"
+                                    name="lead_department"
+                                    id="lead_department"
+                                    value="{{ old('lead_department', $lead->lead_department) }}"
+                                />
+
+                                <x-admin::form.control-group.error control-name="lead_department" />
+                            </x-admin::form.control-group>
+
+                            <x-admin::form.control-group class="flex-1 min-w-[12rem]">
+                                <x-admin::form.control-group.label for="proposal_manager">
+                                    @lang('admin::app.leads.edit.proposal-manager')
+                                </x-admin::form.control-group.label>
+
+                                <x-admin::form.control-group.control
+                                    type="text"
+                                    name="proposal_manager"
+                                    id="proposal_manager"
+                                    value="{{ old('proposal_manager', $lead->proposal_manager) }}"
+                                />
+
+                                <x-admin::form.control-group.error control-name="proposal_manager" />
+                            </x-admin::form.control-group>
+
+                            <x-admin::form.control-group class="flex-1 min-w-[12rem]">
+                                <x-admin::form.control-group.label for="staff_representative">
+                                    @lang('admin::app.leads.edit.staff-representative')
+                                </x-admin::form.control-group.label>
+
+                                <x-admin::form.control-group.control
+                                    type="text"
+                                    name="staff_representative"
+                                    id="staff_representative"
+                                    value="{{ old('staff_representative', $lead->staff_representative) }}"
+                                />
+
+                                <x-admin::form.control-group.error control-name="staff_representative" />
+                            </x-admin::form.control-group>
                         </div>
                     </div>
                     </div>
@@ -559,6 +661,7 @@
                             { id: 'address', label: 'Address' },
                             { id: 'metrics', label: 'Metrics' },
                             { id: 'lifecycle', label: 'Lifecycle' },
+                            { id: 'team', label: 'Team & Department' },
                             { id: 'contact-person', label: '@lang('admin::app.leads.edit.contact-person')' },
                             { id: 'products', label: '@lang('admin::app.leads.edit.products')' }
                         ],
