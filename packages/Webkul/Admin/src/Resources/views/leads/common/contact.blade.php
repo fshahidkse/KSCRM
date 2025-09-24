@@ -49,7 +49,7 @@
                 :attribute="{'id': person?.id, 'code': 'person[emails]', 'name': 'Email'}"
                 validations="required"
                 :value="person.emails"
-                :is-disabled="person?.id ? true : false"
+                :is-disabled="false"
             ></v-email-component>
         </x-admin::form.control-group>
 
