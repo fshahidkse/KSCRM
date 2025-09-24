@@ -31,8 +31,7 @@
                     <!-- Stage Cards -->
                     <div
                         class="flex min-w-[275px] max-w-[275px] flex-col gap-1 rounded-lg border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900"
-                        v-for="(stage, stageIndex) in stageLeads"
-                        :key="stage.id ?? stageIndex"
+                        v-for="(stage, index) in stageLeads"
                     >
                         {!! view_render_event('admin.leads.index.kanban.content.stage.header.before') !!}
 
@@ -125,24 +124,25 @@
                                 {!! view_render_event('admin.leads.index.kanban.content.stage.body.card.before') !!}
 
                                 <a
-                                    class="lead-item flex cursor-pointer flex-col gap-4 rounded-lg border px-3 py-3 shadow-sm transition-all duration-150 hover:-translate-y-0.5 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-gray-900"
-                                    :class="cardClasses(stage, index)"
-                                    :style="cardStyle(stage, index)"
+                                    class="lead-item flex cursor-pointer flex-col gap-5 rounded-md border border-gray-100 bg-gray-50 p-2 dark:border-gray-400 dark:bg-gray-400"
                                     :href="'{{ route('admin.leads.view', 'replaceId') }}'.replace('replaceId', element.id)"
                                 >
                                     {!! view_render_event('admin.leads.index.kanban.content.stage.body.card.header.before') !!}
 
-                                    <span
-                                        class="block h-1 w-full rounded-full"
-                                        :class="stagePalette(stage).accent"
-                                    ></span>
-
                                     <!-- Header -->
                                     <div class="flex items-start justify-between">
-                                        <div class="flex flex-col gap-0.5">
-                                            <span class="text-xs font-semibold uppercase tracking-wide text-gray-900 dark:text-white">
-                                                @{{ element.opportunity_number ? element.opportunity_number : '-' }}
-                                            </span>
+                                        <div class="flex items-center gap-1">
+                                            <x-admin::avatar ::name="element.person && element.person.name ? element.person.name : ''" />
+                                  
+                                            <div class="flex flex-col gap-0.5">
+                                                <span class="text-xs font-medium">
+                                                    @{{ element.person && element.person.name ? element.person.name : '' }}
+                                                </span>
+
+                                                <span class="text-[10px] leading-normal">
+                                                    @{{ element.person && element.person.organization && element.person.organization.name ? element.person.organization.name : '' }}
+                                                </span>
+                                            </div>
                                         </div>
 
                                         <div
@@ -163,50 +163,53 @@
 
                                     {!! view_render_event('admin.leads.index.kanban.content.stage.body.card.header.after') !!}
 
-                                    <div class="flex flex-col gap-4">
-                                        {!! view_render_event('admin.leads.index.kanban.content.stage.body.card.title.before') !!}
+                                    {!! view_render_event('admin.leads.index.kanban.content.stage.body.card.title.before') !!}
 
-                                        <div class="flex flex-col gap-1">
-                                            <p class="text-sm font-semibold leading-snug text-gray-900 dark:text-white">
-                                                @{{ element.title ? element.title : '-' }}
-                                            </p>
+                                    <!-- Lead Title -->
+                                    <p class="text-xs font-medium">
+                                        @{{ element.title }}
+                                    </p>
 
-                                            <p
-                                                class="text-xs text-gray-500 dark:text-gray-300"
-                                                v-if="element.person && element.person.organization && element.person.organization.name"
+                                    {!! view_render_event('admin.leads.index.kanban.content.stage.body.card.title.after') !!}
+
+                                    <div class="flex flex-wrap gap-1">
+                                        <div
+                                            class="flex items-center gap-1 rounded-xl bg-gray-200 px-2 py-1 text-xs font-medium dark:bg-gray-800 dark:text-white"
+                                            v-if="element.user"
+                                        >
+                                            <span class="icon-settings-user text-sm"></span>
+                                            
+                                            @{{ element.user.name }}
+                                        </div>
+
+                                        <div class="rounded-xl bg-gray-200 px-2 py-1 text-xs font-medium dark:bg-gray-800 dark:text-white">
+                                            @{{ element.formatted_lead_value }}
+                                        </div>
+
+                                        <div class="rounded-xl bg-gray-200 px-2 py-1 text-xs font-medium dark:bg-gray-800 dark:text-white">
+                                            @{{ element.source.name }}
+                                        </div>
+
+                                        <div class="rounded-xl bg-gray-200 px-2 py-1 text-xs font-medium dark:bg-gray-800 dark:text-white">
+                                            @{{ element.type.name }}
+                                        </div>
+
+                                        <!-- Tags -->
+                                        <template v-for="tag in element.tags">
+                                            {!! view_render_event('admin.leads.index.kanban.content.stage.body.card.tag.before') !!}
+
+                                            <div
+                                                class="rounded-xl bg-gray-200 px-2 py-1 text-xs font-medium dark:bg-gray-800"
+                                                :style="{
+                                                    backgroundColor: tag.color,
+                                                    color: tagTextColor[tag.color]
+                                                }"
                                             >
-                                                @{{ element.person.organization.name }}
-                                            </p>
-                                        </div>
-
-                                        {!! view_render_event('admin.leads.index.kanban.content.stage.body.card.title.after') !!}
-
-                                        <div class="flex flex-col gap-2 text-xs">
-                                            <div class="flex items-center gap-2">
-                                                <span class="text-[10px] font-semibold uppercase tracking-wide text-gray-400 dark:text-gray-500">
-                                                    @lang('admin::app.leads.index.kanban.card.client-company')
-                                                </span>
-
-                                                <span
-                                                    class="inline-flex max-w-[13rem] items-center gap-1 rounded-full bg-gray-100 px-2 py-1 font-medium text-gray-700 dark:bg-gray-800/60 dark:text-gray-200"
-                                                    :title="element.client_company"
-                                                >
-                                                    @{{ element.client_company ? element.client_company : '-' }}
-                                                </span>
+                                                @{{ tag.name }}
                                             </div>
 
-                                            <div class="flex items-center gap-2">
-                                                <span class="text-[10px] font-semibold uppercase tracking-wide text-gray-400 dark:text-gray-500">
-                                                    @lang('admin::app.leads.index.kanban.card.proposal-due-date')
-                                                </span>
-
-                                                <span
-                                                    class="inline-flex items-center gap-1 rounded-full bg-gray-100 px-2 py-1 font-medium text-gray-700 dark:bg-gray-800/60 dark:text-gray-200"
-                                                >
-                                                    @{{ element.formatted_proposal_due_date ? element.formatted_proposal_due_date : '-' }}
-                                                </span>
-                                            </div>
-                                        </div>
+                                            {!! view_render_event('admin.leads.index.kanban.content.stage.body.card.tag.after') !!}
+                                        </template>
                                     </div>
                                 </a>
 
@@ -245,15 +248,6 @@
 
                     isLoading: true,
 
-                    stagePalettes: [
-                        { base: 'border-violet-200 bg-violet-50 dark:border-violet-500/40 dark:bg-violet-500/20', accent: 'bg-violet-500 dark:bg-violet-400', overlay: 'rgba(99, 102, 241, 0.18)' },
-                        { base: 'border-emerald-200 bg-emerald-50 dark:border-emerald-500/40 dark:bg-emerald-500/20', accent: 'bg-emerald-500 dark:bg-emerald-400', overlay: 'rgba(16, 185, 129, 0.18)' },
-                        { base: 'border-amber-200 bg-amber-50 dark:border-amber-500/40 dark:bg-amber-500/20', accent: 'bg-amber-500 dark:bg-amber-400', overlay: 'rgba(245, 158, 11, 0.18)' },
-                        { base: 'border-rose-200 bg-rose-50 dark:border-rose-500/40 dark:bg-rose-500/20', accent: 'bg-rose-500 dark:bg-rose-400', overlay: 'rgba(244, 63, 94, 0.18)' },
-                        { base: 'border-cyan-200 bg-cyan-50 dark:border-cyan-500/40 dark:bg-cyan-500/20', accent: 'bg-cyan-500 dark:bg-cyan-400', overlay: 'rgba(6, 182, 212, 0.18)' },
-                        { base: 'border-slate-200 bg-slate-50 dark:border-slate-500/40 dark:bg-slate-500/20', accent: 'bg-slate-500 dark:bg-slate-400', overlay: 'rgba(71, 85, 105, 0.18)' },
-                    ],
-
                     tagTextColor: {
                         '#FEE2E2': '#DC2626',
                         '#FFEDD5': '#EA580C',
@@ -282,63 +276,6 @@
             },
 
             methods: {
-                /**
-                 * Returns the palette configuration for a stage.
-                 *
-                 * @param {object} stage
-                 * @returns {object}
-                 */
-                stagePalette(stage) {
-                    const rawOrder = stage && stage.sort_order !== undefined
-                        ? Number(stage.sort_order)
-                        : stage && stage.id !== undefined
-                            ? Number(stage.id)
-                            : 0;
-
-                    const paletteIndex = Number.isFinite(rawOrder)
-                        ? Math.abs(Math.trunc(rawOrder)) % this.stagePalettes.length
-                        : 0;
-
-                    return this.stagePalettes[paletteIndex] || this.stagePalettes[0];
-                },
-
-                /**
-                 * Builds the class list for a lead card.
-                 *
-                 * @param {object} stage
-                 * @param {number} leadIndex
-                 * @returns {Array}
-                 */
-                cardClasses(stage, leadIndex) {
-                    const palette = this.stagePalette(stage);
-
-                    return [
-                        palette.base,
-                        leadIndex % 2
-                            ? 'ring-1 ring-black/5 dark:ring-white/10'
-                            : 'ring-1 ring-black/10 dark:ring-white/5',
-                    ];
-                },
-
-                /**
-                 * Builds inline style overrides for a lead card.
-                 *
-                 * @param {object} stage
-                 * @param {number} leadIndex
-                 * @returns {object}
-                 */
-                cardStyle(stage, leadIndex) {
-                    const palette = this.stagePalette(stage);
-                    const overlay = palette.overlay || 'rgba(255, 255, 255, 0.12)';
-
-                    return {
-                        backgroundImage: leadIndex % 2
-                            ? 'linear-gradient(135deg, rgba(255, 255, 255, 0.32), ' + overlay + ')'
-                            : 'linear-gradient(135deg, ' + overlay + ', transparent)',
-                        backgroundBlendMode: 'overlay',
-                    };
-                },
-
                 /**
                  * Initialization: This function checks for any previously saved filters in local storage and applies them as needed.
                  *
