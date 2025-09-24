@@ -192,6 +192,7 @@
                                         'lead_pipeline_stage_id',
                                         'quals_due_date',
                                         'proposal_due_date',
+                                        'presentation_datetime',
                                         'estimated_selection_date',
                                         'close_date',
                                         'estimated_start_date',
