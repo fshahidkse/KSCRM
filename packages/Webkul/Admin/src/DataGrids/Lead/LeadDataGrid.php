@@ -4,6 +4,10 @@ namespace Webkul\Admin\DataGrids\Lead;
 
 use Illuminate\Contracts\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Str;
+use Webkul\Attribute\Models\AttributeValue;
+use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\DataGrid\DataGrid;
 use Webkul\Lead\Repositories\PipelineRepository;
 use Webkul\Lead\Repositories\SourceRepository;
@@ -22,6 +26,16 @@ class LeadDataGrid extends DataGrid
     protected $pipeline;
 
     /**
+     * Cached attribute column metadata.
+     */
+    protected array $attributeColumns = [];
+
+    /**
+     * Indicates if leads table contains lead_type_id column.
+     */
+    protected bool $hasLeadTypeColumn = false;
+
+    /**
      * Create data grid instance.
      *
      * @return void
@@ -32,6 +46,7 @@ class LeadDataGrid extends DataGrid
         protected SourceRepository $sourceRepository,
         protected TypeRepository $typeRepository,
         protected UserRepository $userRepository,
+        protected AttributeRepository $attributeRepository,
         protected TagRepository $tagRepository,
     ) {
         if (request('pipeline_id')) {
@@ -39,6 +54,74 @@ class LeadDataGrid extends DataGrid
         } else {
             $this->pipeline = $this->pipelineRepository->getDefaultPipeline();
         }
+
+        $this->hasLeadTypeColumn = Schema::hasColumn('leads', 'lead_type_id');
+        $this->attributeColumns = $this->initializeAttributeColumns();
+    }
+
+    /**
+     * Prepare metadata for attribute-backed columns that should appear in the table view.
+     */
+    protected function initializeAttributeColumns(): array
+    {
+        $definitions = [
+            'quals_due_date' => [
+                'alias'        => 'quals_due_date',
+                'label'        => trans('admin::app.leads.index.datagrid.quals-due-date'),
+                'display_type' => 'date',
+                'format'       => 'd M Y',
+            ],
+            'proposal_due_date' => [
+                'alias'        => 'proposal_due_date',
+                'label'        => trans('admin::app.leads.index.datagrid.proposal-due-date'),
+                'display_type' => 'date',
+                'format'       => 'd M Y',
+            ],
+            'presentation_datetime' => [
+                'alias'        => 'presentation_datetime',
+                'label'        => trans('admin::app.leads.index.datagrid.presentation-datetime'),
+                'display_type' => 'datetime',
+                'format'       => 'd M Y h:i A',
+            ],
+            'total_estimated_fee' => [
+                'alias'        => 'total_estimated_fee',
+                'label'        => trans('admin::app.leads.index.datagrid.total-estimated-fee'),
+                'display_type' => 'currency',
+            ],
+            'firm_estimated_fee' => [
+                'alias'        => 'firm_estimated_fee',
+                'label'        => trans('admin::app.leads.index.datagrid.firm-estimated-fee'),
+                'display_type' => 'currency',
+            ],
+            'win_probability' => [
+                'alias'        => 'win_probability',
+                'label'        => trans('admin::app.leads.index.datagrid.win-probability'),
+                'display_type' => 'percentage',
+            ],
+        ];
+
+        $columns = [];
+
+        foreach ($definitions as $code => $meta) {
+            $attribute = $this->attributeRepository->getAttributeByCode($code);
+
+            if (! $attribute || $attribute->entity_type !== 'leads') {
+                continue;
+            }
+
+            $storageColumn = AttributeValue::$attributeTypeFields[$attribute->type] ?? null;
+
+            if (! $storageColumn) {
+                continue;
+            }
+
+            $columns[$code] = array_merge($meta, [
+                'attribute'      => $attribute,
+                'storage_column' => $storageColumn,
+            ]);
+        }
+
+        return $columns;
     }
 
     /**
@@ -57,7 +140,10 @@ class LeadDataGrid extends DataGrid
                 'leads.client_company',
                 'leads.owner_company',
                 'leads.opportunity_number',
+                'leads.proposal_manager',
+                'leads.description',
                 'leads.created_at',
+                DB::raw('leads.staff_representative as staff_representative'),
                 'lead_pipeline_stages.name as stage',
                 'lead_tags.tag_id as tag_id',
                 'persons.id as person_id',
@@ -75,6 +161,24 @@ class LeadDataGrid extends DataGrid
             ->groupBy('leads.id')
             ->where('leads.lead_pipeline_id', $this->pipeline->id);
 
+        if ($this->hasLeadTypeColumn) {
+            $queryBuilder->addSelect('lead_types.name as lead_type_name')
+                ->leftJoin('lead_types', 'leads.lead_type_id', '=', 'lead_types.id');
+        }
+
+        if (! empty($this->attributeColumns)) {
+            $queryBuilder->leftJoin('attribute_values as lead_attribute_values', function ($join) {
+                $join->on('leads.id', '=', 'lead_attribute_values.entity_id')
+                    ->where('lead_attribute_values.entity_type', '=', 'leads');
+            });
+
+            foreach ($this->attributeColumns as $column) {
+                $queryBuilder->addSelect(DB::raw(
+                    "MAX(CASE WHEN lead_attribute_values.attribute_id = {$column['attribute']->id} THEN lead_attribute_values.{$column['storage_column']} END) as {$column['alias']}"
+                ));
+            }
+        }
+
         if ($userIds = bouncer()->getAuthorizedUserIds()) {
             $queryBuilder->whereIn('leads.user_id', $userIds);
         }
@@ -90,6 +194,13 @@ class LeadDataGrid extends DataGrid
         $this->addFilter('tag_name', 'tags.name');
         $this->addFilter('created_at', 'leads.created_at');
         $this->addFilter('rotten_lead', DB::raw('DATEDIFF(NOW(), '.$tablePrefix.'leads.created_at) >= '.$tablePrefix.'lead_pipelines.rotten_days'));
+        $this->addFilter('opportunity_number', 'leads.opportunity_number');
+        $this->addFilter('client_company', 'leads.client_company');
+        $this->addFilter('owner_company', 'leads.owner_company');
+        if ($this->hasLeadTypeColumn) {
+            $this->addFilter('lead_type_name', 'lead_types.id');
+        }
+        $this->addFilter('proposal_manager', 'leads.proposal_manager');
 
         return $queryBuilder;
     }
@@ -100,22 +211,104 @@ class LeadDataGrid extends DataGrid
     public function prepareColumns(): void
     {
         $this->addColumn([
-            'index'      => 'id',
-            'label'      => trans('admin::app.leads.index.datagrid.id'),
-            'type'       => 'integer',
+            'index'      => 'opportunity_number',
+            'label'      => trans('admin::app.leads.index.datagrid.proposal-number'),
+            'type'       => 'string',
+            'searchable' => true,
             'sortable'   => true,
             'filterable' => true,
         ]);
 
-
         $this->addColumn([
             'index'      => 'title',
-            'label'      => __('Opportunity Title'),
+            'label'      => trans('admin::app.leads.index.datagrid.project-name'),
             'type'       => 'string',
             'searchable' => true,
             'sortable'   => true,
         ]);
 
+        $this->addColumn([
+            'index'      => 'client_company',
+            'label'      => trans('admin::app.leads.index.datagrid.client-company'),
+            'type'       => 'string',
+            'searchable' => true,
+            'sortable'   => true,
+            'filterable' => true,
+        ]);
+
+        $this->addColumn([
+            'index'      => 'owner_company',
+            'label'      => trans('admin::app.leads.index.datagrid.owner-company'),
+            'type'       => 'string',
+            'searchable' => true,
+            'sortable'   => true,
+            'filterable' => true,
+        ]);
+
+        if ($this->hasLeadTypeColumn) {
+            $this->addColumn([
+                'index'              => 'lead_type_name',
+                'label'              => trans('admin::app.leads.index.datagrid.lead-role'),
+                'type'               => 'string',
+                'searchable'         => false,
+                'sortable'           => true,
+                'filterable'         => true,
+                'filterable_type'    => 'dropdown',
+                'filterable_options' => $this->typeRepository->all()
+                    ->map(fn ($type) => ['value' => $type->id, 'label' => $type->name])
+                    ->values()
+                    ->toArray(),
+                'closure'            => fn ($row) => $row->lead_type_name ?? '--',
+            ]);
+        }
+
+        $this->addColumn([
+            'index'      => 'proposal_manager',
+            'label'      => trans('admin::app.leads.index.datagrid.proposal-manager'),
+            'type'       => 'string',
+            'searchable' => false,
+            'sortable'   => false,
+            'filterable' => false,
+            'closure'    => fn ($row) => $row->proposal_manager ?? '--',
+        ]);
+
+        $this->addColumn([
+            'index'      => 'staff_representative',
+            'label'      => trans('admin::app.leads.index.datagrid.staff-representative'),
+            'type'       => 'string',
+            'searchable' => false,
+            'sortable'   => false,
+            'filterable' => false,
+            'closure'    => fn ($row) => $row->staff_representative ?? '--',
+        ]);
+
+        foreach ($this->attributeColumns as $column) {
+            $this->addColumn([
+                'index'      => $column['alias'],
+                'label'      => $column['label'],
+                'type'       => in_array($column['display_type'], ['date', 'datetime'], true) ? 'date' : 'string',
+                'searchable' => false,
+                'sortable'   => false,
+                'filterable' => false,
+                'closure'    => function ($row) use ($column) {
+                    $value = $row->{$column['alias']} ?? null;
+
+                    if (! $value) {
+                        return '--';
+                    }
+
+                    return match ($column['display_type']) {
+                        'date'      => core()->formatDate($value, $column['format'] ?? 'd M Y'),
+                        'datetime'  => core()->formatDate($value, $column['format'] ?? 'd M Y h:i A'),
+                        'currency'  => core()->formatBasePrice((float) $value),
+                        'percentage'=> (is_numeric($value)
+                            ? rtrim(rtrim(number_format((float) $value, 2, '.', ''), '0'), '.')
+                            : $value).'%',
+                        default     => $value,
+                    };
+                },
+            ]);
+        }
 
         $this->addColumn([
             'index'      => 'lead_value',
@@ -127,45 +320,16 @@ class LeadDataGrid extends DataGrid
             'closure'    => fn ($row) => core()->formatBasePrice($row->lead_value, 2),
         ]);
 
-
         $this->addColumn([
-            'index'              => 'tag_name',
-            'label'              => trans('admin::app.leads.index.datagrid.tag-name'),
-            'type'               => 'string',
-            'searchable'         => false,
-            'sortable'           => true,
-            'filterable'         => true,
-            'filterable_type'    => 'searchable_dropdown',
-            'closure'            => fn ($row) => $row->tag_name ?? '--',
-            'filterable_options' => [
-                'repository' => TagRepository::class,
-                'column'     => [
-                    'label' => 'name',
-                    'value' => 'name',
-                ],
-            ],
-        ]);
-
-        $this->addColumn([
-            'index'              => 'person_name',
-            'label'              => trans('admin::app.leads.index.datagrid.contact-person'),
-            'type'               => 'string',
-            'searchable'         => false,
-            'sortable'           => true,
-            'filterable'         => true,
-            'filterable_type'    => 'searchable_dropdown',
-            'filterable_options' => [
-                'repository' => \Webkul\Contact\Repositories\PersonRepository::class,
-                'column'     => [
-                    'label' => 'name',
-                    'value' => 'name',
-                ],
-            ],
-            'closure'    => function ($row) {
-                $route = route('admin.contacts.persons.view', $row->person_id);
-
-                return "<a class=\"text-brandColor transition-all hover:underline\" href='".$route."'>".$row->person_name.'</a>';
-            },
+            'index'      => 'description',
+            'label'      => trans('admin::app.leads.index.datagrid.comments'),
+            'type'       => 'string',
+            'searchable' => false,
+            'sortable'   => false,
+            'filterable' => false,
+            'closure'    => fn ($row) => $row->description
+                ? Str::limit(strip_tags($row->description), 80)
+                : '--',
         ]);
 
         $this->addColumn([
@@ -185,24 +349,44 @@ class LeadDataGrid extends DataGrid
         ]);
 
         $this->addColumn([
-            'index'      => 'rotten_lead',
-            'label'      => __('Rotten Opportunity'),
-            'type'       => 'string',
-            'sortable'   => true,
-            'searchable' => false,
-            'closure'    => function ($row) {
-                if (! $row->rotten_lead) {
-                    return trans('admin::app.leads.index.datagrid.no');
-                }
+            'index'              => 'person_name',
+            'label'              => trans('admin::app.leads.index.datagrid.contact-person'),
+            'type'               => 'string',
+            'searchable'         => false,
+            'sortable'           => true,
+            'filterable'         => true,
+            'filterable_type'    => 'searchable_dropdown',
+            'filterable_options' => [
+                'repository' => \Webkul\Contact\Repositories\PersonRepository::class,
+                'column'     => [
+                    'label' => 'name',
+                    'value' => 'name',
+                ],
+            ],
+            'closure'            => function ($row) {
+                $route = route('admin.contacts.persons.view', $row->person_id);
 
-                if (in_array($row->stage_code, ['won', 'lost'])) {
-                    return trans('admin::app.leads.index.datagrid.no');
-                }
-
-                return trans('admin::app.leads.index.datagrid.yes');
+                return "<a class=\"text-brandColor transition-all hover:underline\" href='".$route."'>".$row->person_name.'</a>';
             },
         ]);
 
+        $this->addColumn([
+            'index'              => 'tag_name',
+            'label'              => trans('admin::app.leads.index.datagrid.tag-name'),
+            'type'               => 'string',
+            'searchable'         => false,
+            'sortable'           => true,
+            'filterable'         => true,
+            'filterable_type'    => 'searchable_dropdown',
+            'closure'            => fn ($row) => $row->tag_name ?? '--',
+            'filterable_options' => [
+                'repository' => TagRepository::class,
+                'column'     => [
+                    'label' => 'name',
+                    'value' => 'name',
+                ],
+            ],
+        ]);
 
         $this->addColumn([
             'index'           => 'created_at',
@@ -262,3 +446,10 @@ class LeadDataGrid extends DataGrid
         ]);
     }
 }
+
+
+
+
+
+
+

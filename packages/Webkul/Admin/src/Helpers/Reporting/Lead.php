@@ -272,17 +272,21 @@ class Lead extends AbstractReporting
      */
     public function getTotalWonLeadValueByTypes()
     {
-        return $this->leadRepository
+        $query = $this->leadRepository
             ->resetModel()
-            ->select(
-                'lead_types.name',
-                DB::raw('SUM(lead_value) as total')
-            )
-            ->leftJoin('lead_types', 'leads.lead_type_id', '=', 'lead_types.id')
+            ->select(DB::raw('SUM(lead_value) as total'))
             ->whereIn('lead_pipeline_stage_id', $this->wonStageIds)
-            ->whereBetween('leads.created_at', [$this->startDate, $this->endDate])
-            ->groupBy('lead_type_id')
-            ->get();
+            ->whereBetween('leads.created_at', [$this->startDate, $this->endDate]);
+
+        if (Schema::hasColumn('leads', 'lead_type_id')) {
+            $query->addSelect('lead_types.name')
+                ->leftJoin('lead_types', 'leads.lead_type_id', '=', 'lead_types.id')
+                ->groupBy('lead_type_id');
+        } else {
+            $query->addSelect(DB::raw("'Unknown' as name"));
+        }
+
+        return $query->get();
     }
 
     /**
@@ -349,3 +353,4 @@ class Lead extends AbstractReporting
         return $stats ?? [];
     }
 }
+
