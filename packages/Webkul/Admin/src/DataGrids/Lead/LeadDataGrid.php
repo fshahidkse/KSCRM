@@ -370,33 +370,6 @@ class LeadDataGrid extends DataGrid
             },
         ]);
 
-        $this->addColumn([
-            'index'              => 'tag_name',
-            'label'              => trans('admin::app.leads.index.datagrid.tag-name'),
-            'type'               => 'string',
-            'searchable'         => false,
-            'sortable'           => true,
-            'filterable'         => true,
-            'filterable_type'    => 'searchable_dropdown',
-            'closure'            => fn ($row) => $row->tag_name ?? '--',
-            'filterable_options' => [
-                'repository' => TagRepository::class,
-                'column'     => [
-                    'label' => 'name',
-                    'value' => 'name',
-                ],
-            ],
-        ]);
-
-        $this->addColumn([
-            'index'           => 'created_at',
-            'label'           => trans('admin::app.leads.index.datagrid.created-at'),
-            'type'            => 'date',
-            'searchable'      => false,
-            'sortable'        => true,
-            'filterable'      => true,
-            'filterable_type' => 'date_range',
-        ]);
     }
 
     /**
