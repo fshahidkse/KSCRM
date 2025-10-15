@@ -141,7 +141,7 @@ class PersonController extends Controller
         try {
             Event::dispatch('contacts.person.delete.before', $id);
 
-            $person->delete($id);
+            $person->delete();
 
             Event::dispatch('contacts.person.delete.after', $id);
 
