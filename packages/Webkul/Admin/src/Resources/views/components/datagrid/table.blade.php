@@ -36,7 +36,7 @@
                     <template v-else>
                         <div
                             class="row grid min-h-[47px] items-center gap-2.5 border-b bg-gray-50 px-4 py-2.5 text-black dark:border-gray-800 dark:bg-gray-900 dark:text-gray-300 max-lg:hidden"
-                            :style="`grid-template-columns: repeat(${gridsCount}, minmax(0, 1fr))`"
+                            :style="gridTemplateStyle"
                         >
                             <!-- Mass Actions -->
                             <p v-if="available.massActions.length">
@@ -65,7 +65,7 @@
                             <!-- Columns -->
                             <template v-for="column in available.columns">
                                 <div
-                                    class="flex items-center gap-1.5 break-words"
+                                    class="relative flex items-center gap-1.5 break-words pr-3"
                                     :class="{'cursor-pointer select-none hover:text-gray-800 dark:hover:text-white': column.sortable}"
                                     @click="sort(column)"
                                     v-if="column.visibility"
@@ -77,6 +77,11 @@
                                         :class="[applied.sort.order === 'asc' ? 'icon-stats-down': 'icon-stats-up']"
                                         v-if="column.index == applied.sort.column"
                                     ></i>
+
+                                    <span
+                                        class="absolute right-0 top-0 h-full w-[6px] cursor-col-resize select-none bg-transparent transition hover:bg-gray-400 dark:hover:bg-gray-600"
+                                        @mousedown.stop.prevent="startResize($event, column)"
+                                    ></span>
                                 </div>
                             </template>
 
@@ -175,7 +180,7 @@
                             <div
                                 class="row grid items-center gap-2.5 border-b px-4 py-4 text-black transition-all hover:bg-gray-50 dark:border-gray-800 dark:text-gray-300 dark:hover:bg-gray-950 max-lg:hidden"
                                 v-for="record in available.records"
-                                :style="`grid-template-columns: repeat(${gridsCount}, minmax(0, 1fr))`"
+                                :style="gridTemplateStyle"
                             >
                                 <!-- Mass Actions -->
                                 <p v-if="available.massActions.length">
@@ -197,7 +202,7 @@
                                 <!-- Columns -->
                                 <template v-for="column in available.columns">
                                     <p
-                                        class="break-words"
+                                        class="break-words whitespace-normal min-w-0 pr-2"
                                         v-html="record[column.index]"
                                         v-if="column.visibility"
                                     >
@@ -291,8 +296,45 @@
             template: '#v-datagrid-table-template',
 
             props: ['isLoading', 'available', 'applied'],
-            
+
+            data() {
+                return {
+                    columnWidths: {},
+                    resizingColumn: null,
+                    resizeStartX: 0,
+                    resizeStartWidth: 0,
+                };
+            },
+
             computed: {
+                gridTemplateStyle() {
+                    const widths = [];
+
+                    if (this.available.massActions.length) {
+                        widths.push('48px');
+                    }
+
+                    this.available.columns.forEach((column) => {
+                        if (! column.visibility) {
+                            return;
+                        }
+
+                        const width = this.columnWidths[column.index] ?? column.width ?? 180;
+
+                        widths.push(`${Math.max(120, width)}px`);
+                    });
+
+                    if (this.available.actions.length) {
+                        widths.push('120px');
+                    }
+
+                    if (! widths.length) {
+                        widths.push('1fr');
+                    }
+
+                    return `grid-template-columns: ${widths.join(' ')}`;
+                },
+
                 gridsCount() {
                     let count = this.available.columns.filter((column) => column.visibility).length;
 
@@ -308,7 +350,79 @@
                 },
             },
 
+            watch: {
+                'available.columns': {
+                    handler() {
+                        this.ensureColumnWidths();
+                    },
+                    deep: true,
+                    immediate: true,
+                },
+            },
+
+            beforeUnmount() {
+                this.detachResizeListeners();
+            },
+
             methods: {
+                ensureColumnWidths() {
+                    const updated = { ...this.columnWidths };
+
+                    this.available.columns.forEach((column) => {
+                        if (! updated[column.index]) {
+                            updated[column.index] = column.width ?? 180;
+                        }
+                    });
+
+                    Object.keys(updated).forEach((key) => {
+                        if (! this.available.columns.find(column => column.index === key)) {
+                            delete updated[key];
+                        }
+                    });
+
+                    this.columnWidths = updated;
+                },
+
+                startResize(event, column) {
+                    event.stopPropagation();
+                    event.preventDefault();
+
+                    this.resizingColumn = column.index;
+                    this.resizeStartX = event.clientX;
+                    this.resizeStartWidth = this.columnWidths[column.index] ?? column.width ?? 180;
+
+                    this.detachResizeListeners();
+
+                    window.addEventListener('mousemove', this.onResizeMove);
+                    window.addEventListener('mouseup', this.stopResize);
+                },
+
+                onResizeMove(event) {
+                    if (! this.resizingColumn) {
+                        return;
+                    }
+
+                    const delta = event.clientX - this.resizeStartX;
+
+                    const nextWidth = Math.max(120, this.resizeStartWidth + delta);
+
+                    this.columnWidths = {
+                        ...this.columnWidths,
+                        [this.resizingColumn]: nextWidth,
+                    };
+                },
+
+                stopResize() {
+                    this.resizingColumn = null;
+
+                    this.detachResizeListeners();
+                },
+
+                detachResizeListeners() {
+                    window.removeEventListener('mousemove', this.onResizeMove);
+                    window.removeEventListener('mouseup', this.stopResize);
+                },
+
                 /**
                  * Select all records in the datagrid.
                  *
