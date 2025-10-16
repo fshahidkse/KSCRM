@@ -86,12 +86,12 @@
                             </template>
 
                             <!-- Actions -->
-                            <p
-                                class="text-end"
+                            <div
+                                class="flex items-center justify-end gap-1.5 pr-3"
                                 v-if="available.actions.length"
                             >
                                 @lang('admin::app.components.datagrid.table.actions')
-                            </p>
+                            </div>
                         </div>
                         
                         <!-- Mobile Sort/Filter Header -->
@@ -210,19 +210,19 @@
                                 </template>
 
                                 <!-- Actions -->
-                                <p
-                                    class="flex h-full items-center place-self-end"
+                                <div
+                                    class="flex h-full items-center justify-end gap-1.5 pr-2"
                                     v-if="available.actions.length"
                                 >
                                     <span
-                                        class="cursor-pointer rounded-md p-1.5 text-2xl transition-all hover:bg-gray-200 dark:hover:bg-gray-800 max-sm:place-self-center"
+                                        class="cursor-pointer rounded-md p-1.5 text-base transition-all hover:bg-gray-200 dark:hover:bg-gray-800"
                                         :class="action.icon"
                                         v-text="! action.icon ? action.title : ''"
                                         v-for="action in record.actions"
                                         @click="performAction(action)"
                                     >
                                     </span>
-                                </p>
+                                </div>
                             </div>
                             
                             <!-- Mobile Card View -->
