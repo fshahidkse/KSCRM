@@ -18,7 +18,7 @@
     >
         <div class="w-full">
             <!-- Table view for larger screens, Card view for mobile -->
-            <div class="table-responsive box-shadow rounded-t-0 grid w-full overflow-hidden border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
+            <div class="table-responsive box-shadow rounded-t-0 grid w-full overflow-x-auto border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
                 <!-- Table Header - Always visible on all screens -->
                 <slot
                     name="header"
@@ -309,9 +309,11 @@
             computed: {
                 gridTemplateStyle() {
                     const widths = [];
+                    let totalWidth = 0;
 
                     if (this.available.massActions.length) {
                         widths.push('48px');
+                        totalWidth += 48;
                     }
 
                     this.available.columns.forEach((column) => {
@@ -321,18 +323,26 @@
 
                         const width = this.columnWidths[column.index] ?? column.width ?? 180;
 
-                        widths.push(`${Math.max(120, width)}px`);
+                        const normalizedWidth = Math.max(120, width);
+
+                        widths.push(`${normalizedWidth}px`);
+
+                        totalWidth += normalizedWidth;
                     });
 
                     if (this.available.actions.length) {
                         widths.push('120px');
+
+                        totalWidth += 120;
                     }
 
                     if (! widths.length) {
                         widths.push('1fr');
                     }
 
-                    return `grid-template-columns: ${widths.join(' ')}`;
+                    const minWidth = totalWidth ? totalWidth + 32 : 0;
+
+                    return `grid-template-columns: ${widths.join(' ')};${minWidth ? ` min-width: ${minWidth}px;` : ''}`;
                 },
 
                 gridsCount() {
@@ -348,6 +358,10 @@
 
                     return count;
                 },
+            },
+
+            mounted() {
+                this.ensureColumnWidths();
             },
 
             watch: {
