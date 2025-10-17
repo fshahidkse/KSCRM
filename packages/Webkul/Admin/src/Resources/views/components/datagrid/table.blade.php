@@ -182,7 +182,7 @@
                             <!-- Desktop View -->
                             <div class="inline-block min-w-full" v-for="record in available.records">
                             <div
-                                class="row grid items-center gap-0 border-b px-4 py-4 text-black transition-all hover:bg-gray-50 dark:border-gray-800 dark:text-gray-300 dark:hover:bg-gray-950 max-lg:hidden"
+                                class="row grid items-center gap-0 border-b px-4 py-4 text-black transition-all hover:bg-gray-100 dark:border-gray-800 dark:text-gray-300 dark:hover:bg-gray-800 max-lg:hidden"
                                 :style="gridTemplateStyle"
                             >
                                 <!-- Mass Actions -->
