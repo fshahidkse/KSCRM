@@ -18,8 +18,8 @@
     >
         <div class="w-full">
             <!-- Table view for larger screens, Card view for mobile -->
-            <div class="table-responsive box-shadow rounded-t-0 w-full border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
-                <div class="w-full overflow-x-auto">
+            <div class="table-responsive box-shadow rounded-t-0 w-full border border-gray-200 dark:border-gray-800">
+                <div class="w-full overflow-x-auto bg-white dark:bg-gray-900">
                 <!-- Table Header - Always visible on all screens -->
                 <slot
                     name="header"
@@ -35,8 +35,9 @@
                     </template>
 
                     <template v-else>
+                        <div class="inline-block min-w-full">
                         <div
-                            class="row grid min-h-[47px] items-center gap-1.5 border-b bg-gray-50 px-4 py-2.5 text-black dark:border-gray-800 dark:bg-gray-900 dark:text-gray-300 max-lg:hidden"
+                            class="row grid min-h-[47px] items-center gap-0 border-b bg-gray-50 px-4 py-2.5 text-black dark:border-gray-800 dark:bg-gray-900 dark:text-gray-300 max-lg:hidden"
                             :style="gridTemplateStyle"
                         >
                             <!-- Mass Actions -->
@@ -93,6 +94,7 @@
                             >
                                 @lang('admin::app.components.datagrid.table.actions')
                             </p>
+                        </div>
                         </div>
                         
                         <!-- Mobile Sort/Filter Header -->
@@ -178,9 +180,9 @@
                     <template v-else>
                         <template v-if="available.records.length">
                             <!-- Desktop View -->
+                            <div class="inline-block min-w-full" v-for="record in available.records">
                             <div
-                                class="row grid items-center gap-1.5 border-b bg-white px-4 py-4 text-black transition-all hover:bg-gray-50 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-300 dark:hover:bg-gray-950 max-lg:hidden"
-                                v-for="record in available.records"
+                                class="row grid items-center gap-0 border-b px-4 py-4 text-black transition-all hover:bg-gray-50 dark:border-gray-800 dark:text-gray-300 dark:hover:bg-gray-950 max-lg:hidden"
                                 :style="gridTemplateStyle"
                             >
                                 <!-- Mass Actions -->
@@ -203,7 +205,7 @@
                                 <!-- Columns -->
                                 <template v-for="column in available.columns">
                                     <p
-                                        class="break-words whitespace-normal min-w-0 pr-2"
+                                        class="break-words whitespace-normal min-w-0 px-1.5"
                                         v-html="record[column.index]"
                                         v-if="column.visibility"
                                     >
@@ -225,6 +227,7 @@
                                     >
                                     </span>
                                 </p>
+                            </div>
                             </div>
                             
                             <!-- Mobile Card View -->
