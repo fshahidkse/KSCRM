@@ -1,4 +1,4 @@
-<x-admin::layouts>
+﻿<x-admin::layouts>
     <x-slot:title>
         @lang('admin::app.leads.create.title')
     </x-slot>

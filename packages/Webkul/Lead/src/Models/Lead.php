@@ -52,6 +52,9 @@ class Lead extends Model implements LeadContract
         'proposal_manager',
         'staff_representative',
         'presentation_datetime',
+        'lead_department',
+        'quals_due_date',
+        'proposal_due_date',
     ];
 
     /**

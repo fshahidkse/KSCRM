@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('leads', function (Blueprint $table) {
             $table->string('proposal_manager')->nullable()->after('lead_pipeline_stage_id');
-            $table->string('staff_responsible')->nullable()->after('proposal_manager');
+            $table->string('staff_representative')->nullable()->after('proposal_manager');
         });
     }
 
@@ -23,7 +23,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('leads', function (Blueprint $table) {
-            $table->dropColumn(['proposal_manager', 'staff_responsible']);
+            $table->dropColumn(['proposal_manager', 'staff_representative']);
         });
     }
 };
