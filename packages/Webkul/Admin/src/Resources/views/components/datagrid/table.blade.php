@@ -18,7 +18,8 @@
     >
         <div class="w-full">
             <!-- Table view for larger screens, Card view for mobile -->
-            <div class="table-responsive box-shadow rounded-t-0 grid w-full overflow-x-auto border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
+            <div class="table-responsive box-shadow rounded-t-0 w-full border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
+                <div class="w-full overflow-x-auto">
                 <!-- Table Header - Always visible on all screens -->
                 <slot
                     name="header"
@@ -35,7 +36,7 @@
 
                     <template v-else>
                         <div
-                            class="row grid min-h-[47px] items-center gap-2.5 border-b bg-gray-50 px-4 py-2.5 text-black dark:border-gray-800 dark:bg-gray-900 dark:text-gray-300 max-lg:hidden"
+                            class="row grid min-h-[47px] items-center gap-1.5 border-b bg-gray-50 px-4 py-2.5 text-black dark:border-gray-800 dark:bg-gray-900 dark:text-gray-300 max-lg:hidden"
                             :style="gridTemplateStyle"
                         >
                             <!-- Mass Actions -->
@@ -86,12 +87,12 @@
                             </template>
 
                             <!-- Actions -->
-                            <div
-                                class="flex items-center justify-end gap-1.5 pr-3"
+                            <p
+                                class="flex items-center justify-center border-l border-gray-200 px-2 dark:border-gray-800"
                                 v-if="available.actions.length"
                             >
                                 @lang('admin::app.components.datagrid.table.actions')
-                            </div>
+                            </p>
                         </div>
                         
                         <!-- Mobile Sort/Filter Header -->
@@ -178,7 +179,7 @@
                         <template v-if="available.records.length">
                             <!-- Desktop View -->
                             <div
-                                class="row grid items-center gap-2.5 border-b px-4 py-4 text-black transition-all hover:bg-gray-50 dark:border-gray-800 dark:text-gray-300 dark:hover:bg-gray-950 max-lg:hidden"
+                                class="row grid items-center gap-1.5 border-b bg-white px-4 py-4 text-black transition-all hover:bg-gray-50 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-300 dark:hover:bg-gray-950 max-lg:hidden"
                                 v-for="record in available.records"
                                 :style="gridTemplateStyle"
                             >
@@ -210,19 +211,20 @@
                                 </template>
 
                                 <!-- Actions -->
-                                <div
-                                    class="flex h-full items-center justify-end gap-1.5 pr-2"
+                                <p
+                                    class="flex items-center justify-center gap-x-1.5 min-w-0 border-l border-gray-200 px-2 dark:border-gray-800"
                                     v-if="available.actions.length"
                                 >
                                     <span
-                                        class="cursor-pointer rounded-md p-1.5 text-base transition-all hover:bg-gray-200 dark:hover:bg-gray-800"
+                                        class="cursor-pointer rounded-md p-1.5 text-2xl transition-all hover:bg-gray-200 dark:hover:bg-gray-800"
                                         :class="action.icon"
+                                        :title="action.title"
                                         v-text="! action.icon ? action.title : ''"
                                         v-for="action in record.actions"
                                         @click="performAction(action)"
                                     >
                                     </span>
-                                </div>
+                                </p>
                             </div>
                             
                             <!-- Mobile Card View -->
@@ -287,6 +289,7 @@
                         </template>
                     </template>
                 </slot>
+                </div>
             </div>
         </div>
     </script>
@@ -340,9 +343,7 @@
                         widths.push('1fr');
                     }
 
-                    const minWidth = totalWidth ? totalWidth + 32 : 0;
-
-                    return `grid-template-columns: ${widths.join(' ')};${minWidth ? ` min-width: ${minWidth}px;` : ''}`;
+                    return `grid-template-columns: ${widths.join(' ')};`;
                 },
 
                 gridsCount() {
