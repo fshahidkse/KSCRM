@@ -43,6 +43,16 @@ class LeadForm extends FormRequest
      */
     public function rules()
     {
+        // Add validation for custom date fields
+        $this->rules['quals_due_date'] = ['nullable', 'date', 'date_format:Y-m-d'];
+        $this->rules['proposal_due_date'] = ['nullable', 'date', 'date_format:Y-m-d'];
+        $this->rules['presentation_datetime'] = ['nullable', 'date'];
+        
+        // Add validation for other custom fields
+        $this->rules['proposal_manager'] = ['nullable', 'string', 'max:255'];
+        $this->rules['staff_representative'] = ['nullable', 'string', 'max:255'];
+        $this->rules['lead_department'] = ['nullable', 'string', 'max:255'];
+        
         foreach (['leads', 'persons'] as $key => $entityType) {
             $attributes = $this->attributeRepository->scopeQuery(function ($query) use ($entityType) {
                 $attributeCodes = $entityType == 'persons'
