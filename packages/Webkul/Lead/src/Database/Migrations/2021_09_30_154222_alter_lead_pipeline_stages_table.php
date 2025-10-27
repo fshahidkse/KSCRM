@@ -21,15 +21,38 @@ return new class extends Migration
             $table->string('name')->after('code')->nullable();
         });
 
-        DB::table('lead_pipeline_stages')
-            ->join('lead_stages', 'lead_pipeline_stages.lead_stage_id', '=', 'lead_stages.id')
-            ->update([
-                'lead_pipeline_stages.code' => DB::raw($tablePrefix.'lead_stages.code'),
-                'lead_pipeline_stages.name' => DB::raw($tablePrefix.'lead_stages.name'),
-            ]);
+        if (DB::connection()->getDriverName() === 'sqlite') {
+            $stages = DB::table('lead_pipeline_stages')
+                ->join('lead_stages', 'lead_pipeline_stages.lead_stage_id', '=', 'lead_stages.id')
+                ->select(
+                    'lead_pipeline_stages.id as pipeline_stage_id',
+                    'lead_stages.code',
+                    'lead_stages.name'
+                )
+                ->get();
+
+            foreach ($stages as $stage) {
+                DB::table('lead_pipeline_stages')
+                    ->where('id', $stage->pipeline_stage_id)
+                    ->update([
+                        'code' => $stage->code,
+                        'name' => $stage->name,
+                    ]);
+            }
+        } else {
+            DB::table('lead_pipeline_stages')
+                ->join('lead_stages', 'lead_pipeline_stages.lead_stage_id', '=', 'lead_stages.id')
+                ->update([
+                    'lead_pipeline_stages.code' => DB::raw($tablePrefix.'lead_stages.code'),
+                    'lead_pipeline_stages.name' => DB::raw($tablePrefix.'lead_stages.name'),
+                ]);
+        }
 
         Schema::table('lead_pipeline_stages', function (Blueprint $table) use ($tablePrefix) {
-            $table->dropForeign($tablePrefix.'lead_pipeline_stages_lead_stage_id_foreign');
+            if (DB::connection()->getDriverName() !== 'sqlite') {
+                $table->dropForeign($tablePrefix.'lead_pipeline_stages_lead_stage_id_foreign');
+            }
+
             $table->dropColumn('lead_stage_id');
 
             $table->unique(['code', 'lead_pipeline_id']);

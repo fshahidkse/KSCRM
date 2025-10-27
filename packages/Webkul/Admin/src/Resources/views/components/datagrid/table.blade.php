@@ -37,8 +37,7 @@
                     <template v-else>
                         <div class="inline-block min-w-full">
                         <div
-                            class="row grid min-h-[47px] items-center gap-0 border-b bg-gray-50 px-4 py-2.5 text-black dark:border-gray-800 dark:bg-gray-900 dark:text-gray-300 max-lg:hidden sticky z-10"
-                            style="top: 62px;"
+                            class="row grid min-h-[47px] items-center gap-0 border-b bg-gray-50 px-4 py-2.5 text-black dark:border-gray-800 dark:bg-gray-900 dark:text-gray-300 max-lg:hidden sticky top-16 z-20 shadow-md"
                             :style="gridTemplateStyle"
                         >
                             <!-- Mass Actions -->
