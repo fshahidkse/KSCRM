@@ -35,7 +35,7 @@
                 </x-slot>
             </x-admin::datagrid.toolbar>
 
-            <div class="flex">
+            <div class="flex relative z-10">
                 <x-admin::datagrid.table :isMultiRow="$isMultiRow">
                     <template #header="{
                         isLoading,
