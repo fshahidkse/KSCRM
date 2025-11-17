@@ -37,7 +37,7 @@
                     <template v-else>
                         <div class="inline-block min-w-full">
                         <div
-                            class="row grid min-h-[47px] items-center gap-0 border-b bg-gray-50 px-4 py-2.5 text-black dark:border-gray-800 dark:bg-gray-900 dark:text-gray-300 max-lg:hidden sticky top-16 z-20 shadow-md"
+                            class="row grid min-h-[47px] items-center gap-0 border-b bg-gray-50 px-4 py-2.5 text-black dark:border-gray-800 dark:bg-gray-900 dark:text-gray-300 max-lg:hidden sticky top-16 z-10 shadow-md"
                             :style="gridTemplateStyle"
                         >
                             <!-- Mass Actions -->
@@ -327,7 +327,7 @@
                             return;
                         }
 
-                        const width = this.columnWidths[column.index] ?? column.width ?? 180;
+                        const width = this.columnWidths[column.index] ?? column.width ?? 160;
 
                         const normalizedWidth = Math.max(120, width);
 

@@ -33,15 +33,22 @@
 
         {!! view_render_event('admin.leads.index.header.right.before') !!}
 
-        <div class="flex items-center gap-x-2.5">
+        <div class="flex items-center gap-x-2.5 relative z-20">
             <!-- Upload File for Opportunity Creation -->
             @if(core()->getConfigData('general.magic_ai.doc_generation.enabled'))
                 @include('admin::leads.index.upload')
             @endif
 
             @if ((request()->view_type ?? "kanban") == "table")
-                <!-- Export Modal -->
-                <x-admin::datagrid.export :src="route('admin.leads.index')" />
+                <div class="flex items-center gap-x-2.5">
+                    <!-- Export Modal -->
+                    <x-admin::datagrid.export :src="route('admin.leads.index')" />
+
+                    <!-- Column Manager -->
+                    <div class="relative z-30">
+                        <x-admin::datagrid.column-manager :src="route('admin.leads.index')" />
+                    </div>
+                </div>
             @endif
 
             <!-- Create button for Opportunities -->

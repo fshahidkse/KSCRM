@@ -337,6 +337,9 @@ return [
             'table' => [
                 'actions'              => 'Actions',
                 'no-records-available' => 'No Records Available.',
+                'manage-columns'       => 'Columns',
+                'visible-columns'      => 'Visible Columns',
+                'min-columns-warning'  => 'At least one column must remain visible.',
             ],
         ],
 
