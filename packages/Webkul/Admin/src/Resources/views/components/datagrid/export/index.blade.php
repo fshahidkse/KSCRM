@@ -138,6 +138,10 @@
                             params.filters[column.index] = column.value;
                         });
 
+                        const urlParams = new URLSearchParams(window.location.search);
+
+                        urlParams.forEach((value, key) => params[key] = value);
+
                         this.$axios
                             .get(this.src, {
                                 params,

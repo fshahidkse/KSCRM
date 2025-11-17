@@ -368,11 +368,13 @@ class LeadController extends Controller
             foreach ($leads as $lead) {
                 Event::dispatch('lead.update.before', $lead->id);
 
-                $lead = $this->leadRepository->find($lead->id);
+                $leadModel = $this->leadRepository->find($lead->id);
 
-                $lead?->update(['lead_pipeline_stage_id' => $massUpdateRequest->input('value')]);
+                if ($leadModel) {
+                    $leadModel->update(['lead_pipeline_stage_id' => $massUpdateRequest->input('value')]);
 
-                Event::dispatch('lead.update.before', $lead->id);
+                    Event::dispatch('lead.update.after', $leadModel);
+                }
             }
 
             return response()->json([

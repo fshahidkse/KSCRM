@@ -68,10 +68,14 @@
     <div class="flex items-center gap-0.5">
         {!! view_render_event('admin.leads.index.view_switcher.pipeline.view_type.before') !!}
 
+        @php
+            $queryParams = request()->query();
+        @endphp
+
         @if (request('view_type'))
             <a
                 class="flex"
-                href="{{ route('admin.leads.index') }}"
+                href="{{ route('admin.leads.index', request()->except('view_type')) }}"
             >
                 <span class="icon-kanban p-2 text-2xl"></span>
             </a>
@@ -81,7 +85,7 @@
             <span class="icon-kanban rounded-md bg-white p-2 text-2xl dark:bg-gray-900"></span>
 
             <a
-                href="{{ route('admin.leads.index', ['view_type' => 'table']) }}"
+                href="{{ route('admin.leads.index', array_merge($queryParams, ['view_type' => 'table'])) }}"
                 class="flex"
             >
                 <span class="icon-list p-2 text-2xl"></span>
