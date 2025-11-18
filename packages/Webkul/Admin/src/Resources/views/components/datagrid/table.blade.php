@@ -17,9 +17,28 @@
         id="v-datagrid-table-template"
     >
         <div class="w-full">
+            <!-- Floating horizontal scrollbar -->
+            <div
+                v-show="showFloatingScroll"
+                class="pointer-events-none fixed z-30"
+                :style="floatingScrollWrapperStyles"
+            >
+                <div
+                    class="datagrid-horizontal-scroll mb-2 h-4 w-full overflow-x-auto overflow-y-hidden rounded border border-gray-200 bg-white pointer-events-auto dark:border-gray-800 dark:bg-gray-900"
+                    ref="horizontalScroll"
+                    @scroll="handleHorizontalScroll"
+                >
+                    <div :style="{ width: `${scrollWidth}px`, height: '1px' }"></div>
+                </div>
+            </div>
+
             <!-- Table view for larger screens, Card view for mobile -->
             <div class="table-responsive box-shadow rounded-t-0 w-full border border-gray-200 dark:border-gray-800">
-                <div class="w-full overflow-x-auto bg-white dark:bg-gray-900">
+                <div
+                    class="w-full overflow-x-auto bg-white dark:bg-gray-900"
+                    ref="scrollContainer"
+                    @scroll="handleTableScroll"
+                >
                 <!-- Table Header - Always visible on all screens -->
                 <slot
                     name="header"
@@ -309,6 +328,15 @@
                     resizingColumn: null,
                     resizeStartX: 0,
                     resizeStartWidth: 0,
+                    scrollWidth: 0,
+                    showHorizontalScroll: false,
+                    isSyncingHorizontalScroll: false,
+                    showFloatingScroll: false,
+                    floatingScrollWrapperStyles: {
+                        left: '0px',
+                        bottom: '24px',
+                        width: '0px',
+                    },
                 };
             },
 
@@ -366,19 +394,41 @@
 
             mounted() {
                 this.ensureColumnWidths();
+                this.updateHorizontalScrollState();
+
+                window.addEventListener('resize', this.updateHorizontalScrollState);
+                window.addEventListener('scroll', this.handleWindowScroll, { passive: true });
             },
 
             watch: {
                 'available.columns': {
                     handler() {
                         this.ensureColumnWidths();
+                        this.updateHorizontalScrollState();
                     },
                     deep: true,
                     immediate: true,
                 },
+
+                'available.records': {
+                    handler() {
+                        this.updateHorizontalScrollState();
+                    },
+                    deep: true,
+                },
+
+                columnWidths: {
+                    handler() {
+                        this.updateHorizontalScrollState();
+                    },
+                    deep: true,
+                },
             },
 
             beforeUnmount() {
+                window.removeEventListener('resize', this.updateHorizontalScrollState);
+                window.removeEventListener('scroll', this.handleWindowScroll);
+
                 this.detachResizeListeners();
             },
 
@@ -399,6 +449,31 @@
                     });
 
                     this.columnWidths = updated;
+                },
+
+                updateHorizontalScrollState() {
+                    this.$nextTick(() => {
+                        const scrollable = this.$refs.scrollContainer;
+
+                        if (! scrollable) {
+                            this.showHorizontalScroll = false;
+                            this.showFloatingScroll = false;
+
+                            return;
+                        }
+
+                        this.scrollWidth = scrollable.scrollWidth;
+
+                        this.showHorizontalScroll = scrollable.scrollWidth > scrollable.clientWidth;
+
+                        if (this.showHorizontalScroll) {
+                            this.syncHorizontalScroll('table');
+                            this.updateFloatingScrollWrapper();
+                            this.updateFloatingScrollVisibility();
+                        } else {
+                            this.showFloatingScroll = false;
+                        }
+                    });
                 },
 
                 startResize(event, column) {
@@ -439,6 +514,98 @@
                 detachResizeListeners() {
                     window.removeEventListener('mousemove', this.onResizeMove);
                     window.removeEventListener('mouseup', this.stopResize);
+                },
+
+                handleTableScroll() {
+                    this.syncHorizontalScroll('table');
+                },
+
+                handleHorizontalScroll(event) {
+                    this.syncHorizontalScroll('ghost', event.target.scrollLeft);
+                },
+
+                syncHorizontalScroll(source, overrideValue = null) {
+                    if (! this.showHorizontalScroll || this.isSyncingHorizontalScroll) {
+                        return;
+                    }
+
+                    const scrollable = this.$refs.scrollContainer;
+                    const ghost = this.$refs.horizontalScroll;
+
+                    if (! scrollable || ! ghost) {
+                        return;
+                    }
+
+                    this.isSyncingHorizontalScroll = true;
+
+                    if (source === 'table') {
+                        ghost.scrollLeft = scrollable.scrollLeft;
+                    } else {
+                        scrollable.scrollLeft = overrideValue ?? ghost.scrollLeft;
+                    }
+
+                    this.$nextTick(() => {
+                        this.isSyncingHorizontalScroll = false;
+                    });
+                },
+
+                updateFloatingScrollWrapper() {
+                    const scrollable = this.$refs.scrollContainer;
+
+                    if (! scrollable) {
+                        return;
+                    }
+
+                    const rect = scrollable.getBoundingClientRect();
+                    const viewportWidth = window.innerWidth || document.documentElement.clientWidth;
+                    const horizontalPadding = 16;
+                    const maxWidth = Math.max(
+                        Math.min(rect.width, viewportWidth - horizontalPadding * 2),
+                        0
+                    );
+                    const clampedLeft = Math.min(
+                        Math.max(rect.left, horizontalPadding),
+                        viewportWidth - maxWidth - horizontalPadding
+                    );
+
+                    this.floatingScrollWrapperStyles = {
+                        left: `${clampedLeft}px`,
+                        bottom: '24px',
+                        width: `${maxWidth}px`,
+                    };
+                },
+
+                updateFloatingScrollVisibility() {
+                    if (! this.showHorizontalScroll) {
+                        this.showFloatingScroll = false;
+
+                        return;
+                    }
+
+                    const rootRect = this.$el?.getBoundingClientRect();
+
+                    if (! rootRect) {
+                        this.showFloatingScroll = false;
+
+                        return;
+                    }
+
+                    const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+                    const intersectsViewport = rootRect.top < viewportHeight && rootRect.bottom > 0;
+
+                    this.showFloatingScroll = intersectsViewport;
+                },
+
+                handleWindowScroll() {
+                    if (! this.showHorizontalScroll) {
+                        return;
+                    }
+
+                    this.updateFloatingScrollVisibility();
+
+                    if (this.showFloatingScroll) {
+                        this.updateFloatingScrollWrapper();
+                    }
                 },
 
                 /**
