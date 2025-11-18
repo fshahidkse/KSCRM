@@ -33,7 +33,7 @@
 
         {!! view_render_event('admin.leads.index.header.right.before') !!}
 
-        <div class="flex items-center gap-x-2.5 relative z-20">
+        <div class="flex items-center gap-x-2.5 relative z-20" style="z-index: 30;">
             <!-- Upload File for Opportunity Creation -->
             @if(core()->getConfigData('general.magic_ai.doc_generation.enabled'))
                 @include('admin::leads.index.upload')

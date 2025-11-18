@@ -18,42 +18,49 @@
             ref="manager"
             v-if="columns.length"
         >
-            <div @click.stop="toggleDropdown">
+            <div
+                ref="trigger"
+                @click.stop="toggleDropdown"
+            >
                 <slot></slot>
             </div>
 
-            <div
-                v-if="isOpen"
-                class="absolute right-0 z-30 mt-2 w-64 rounded-lg border border-gray-200 bg-white p-3 shadow-lg dark:border-gray-800 dark:bg-gray-900"
-            >
-                <p class="mb-2 text-sm font-semibold text-gray-700 dark:text-gray-200">
-                    @lang('admin::app.components.datagrid.table.visible-columns')
-                </p>
-
-                <div class="flex max-h-64 flex-col gap-2 overflow-auto text-sm">
-                    <label
-                        v-for="column in columns"
-                        :key="column.index"
-                        class="flex cursor-pointer items-center gap-2 text-gray-700 dark:text-gray-200"
-                    >
-                        <input
-                            type="checkbox"
-                            class="h-4 w-4 rounded border-gray-300 text-brandColor focus:ring-brandColor"
-                            :checked="column.visibility"
-                            @change="() => toggleColumn(column)"
-                        >
-
-                        <span v-html="column.label"></span>
-                    </label>
-                </div>
-
-                <p
-                    v-if="visibleCount <= 1"
-                    class="mt-3 text-xs text-rose-600 dark:text-rose-400"
+            <teleport to="body">
+                <div
+                    v-if="isOpen"
+                    ref="dropdown"
+                    class="fixed z-[10005] w-64 rounded-lg border border-gray-200 bg-white p-3 shadow-lg dark:border-gray-800 dark:bg-gray-900"
+                    :style="dropdownStyles"
                 >
-                    @lang('admin::app.components.datagrid.table.min-columns-warning')
-                </p>
-            </div>
+                    <p class="mb-2 text-sm font-semibold text-gray-700 dark:text-gray-200">
+                        @lang('admin::app.components.datagrid.table.visible-columns')
+                    </p>
+
+                    <div class="flex max-h-64 flex-col gap-2 overflow-auto text-sm">
+                        <label
+                            v-for="column in columns"
+                            :key="column.index"
+                            class="flex cursor-pointer items-center gap-2 text-gray-700 dark:text-gray-200"
+                        >
+                            <input
+                                type="checkbox"
+                                class="h-4 w-4 rounded border-gray-300 text-brandColor focus:ring-brandColor"
+                                :checked="column.visibility"
+                                @change="() => toggleColumn(column)"
+                            >
+
+                            <span v-html="column.label"></span>
+                        </label>
+                    </div>
+
+                    <p
+                        v-if="visibleCount <= 1"
+                        class="mt-3 text-xs text-rose-600 dark:text-rose-400"
+                    >
+                        @lang('admin::app.components.datagrid.table.min-columns-warning')
+                    </p>
+                </div>
+            </teleport>
         </div>
     </script>
 
@@ -69,6 +76,12 @@
                     available: null,
                     columns: [],
                     visibilityKey: null,
+                    dropdownStyles: {
+                        top: '0px',
+                        left: '0px',
+                        zIndex: 10005,
+                    },
+                    positionListenersAttached: false,
                 };
             },
 
@@ -87,6 +100,7 @@
             beforeUnmount() {
                 this.$emitter.off('change-datagrid', this.updateColumns);
                 document.removeEventListener('click', this.handleOutsideClick);
+                this.detachPositionListeners();
             },
 
             methods: {
@@ -107,6 +121,15 @@
 
                 toggleDropdown() {
                     this.isOpen = ! this.isOpen;
+
+                    if (this.isOpen) {
+                        this.$nextTick(() => {
+                            this.updateDropdownPosition();
+                            this.attachPositionListeners();
+                        });
+                    } else {
+                        this.detachPositionListeners();
+                    }
                 },
 
                 handleOutsideClick(event) {
@@ -114,9 +137,18 @@
                         return;
                     }
 
-                    if (! this.$refs.manager?.contains(event.target)) {
-                        this.isOpen = false;
+                    const manager = this.$refs.manager;
+                    const dropdown = this.$refs.dropdown;
+
+                    if (
+                        manager?.contains(event.target)
+                        || dropdown?.contains?.(event.target)
+                    ) {
+                        return;
                     }
+
+                    this.isOpen = false;
+                    this.detachPositionListeners();
                 },
 
                 toggleColumn(column) {
@@ -166,6 +198,62 @@
                     } catch (error) {
                         return null;
                     }
+                },
+
+                updateDropdownPosition() {
+                    if (! this.isOpen) {
+                        return;
+                    }
+
+                    const trigger = this.$refs.trigger ?? this.$refs.manager;
+                    const dropdown = this.$refs.dropdown;
+
+                    if (! trigger || ! dropdown) {
+                        return;
+                    }
+
+                    const rect = trigger.getBoundingClientRect();
+                    const dropdownWidth = dropdown.offsetWidth || 0;
+                    const gap = 8;
+                    const scrollX = window.pageXOffset ?? window.scrollX ?? 0;
+                    const scrollY = window.pageYOffset ?? window.scrollY ?? 0;
+
+                    let left = rect.right + scrollX - dropdownWidth;
+                    const minLeft = scrollX + 12;
+                    const maxLeft = scrollX + window.innerWidth - dropdownWidth - 12;
+                    const safeMaxLeft = Math.max(maxLeft, minLeft);
+
+                    left = Math.min(Math.max(left, minLeft), safeMaxLeft);
+
+                    const top = rect.bottom + scrollY + gap;
+
+                    this.dropdownStyles = {
+                        ...this.dropdownStyles,
+                        left: `${left}px`,
+                        top: `${top}px`,
+                    };
+                },
+
+                attachPositionListeners() {
+                    if (this.positionListenersAttached) {
+                        return;
+                    }
+
+                    window.addEventListener('resize', this.updateDropdownPosition);
+                    window.addEventListener('scroll', this.updateDropdownPosition, true);
+
+                    this.positionListenersAttached = true;
+                },
+
+                detachPositionListeners() {
+                    if (! this.positionListenersAttached) {
+                        return;
+                    }
+
+                    window.removeEventListener('resize', this.updateDropdownPosition);
+                    window.removeEventListener('scroll', this.updateDropdownPosition, true);
+
+                    this.positionListenersAttached = false;
                 },
             },
         });
