@@ -34,3 +34,5 @@ node_modules/
 /blob-report/
 /playwright/.cache/
 laravel-crm.zip
+.env
+.env
